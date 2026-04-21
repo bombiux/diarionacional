@@ -27,15 +27,16 @@ document.documentElement.classList.remove('dark');
 		</style>
 		<link rel="icon" type="image/png" href="{{ theme.link }}/assets/img/favicon.png">
 		
-		{# Typography: Manrope & Inter #}
+		{# Typography & Icons #}
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
 		{{ function('wp_head') }}
 	</head>
 	<body
-		class="{{ body_class }} bg-surface min-h-screen text-on-surface dark:bg-zinc-900 dark:text-zinc-100 selection:bg-primary selection:text-white overflow-x-hidden antialiased" x-data="{
+		class="{{ body_class }} bg-background min-h-screen text-on-surface dark:bg-zinc-900 dark:text-zinc-100 selection:bg-primary selection:text-white overflow-x-hidden antialiased" x-data="{
 			            darkMode: localStorage.getItem('darkMode') === 'true',
 			            mobileMenuOpen: false,
 			            searchOpen: false,
@@ -95,120 +96,25 @@ document.documentElement.classList.remove('dark');
 		<!-- Skip to content (A11Y-05) -->
 		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary focus:text-white focus:px-6 focus:py-3 focus:rounded-full focus:font-bold focus:text-sm focus:shadow-xl">Saltar al contenido</a>
 
-		<!-- Atmospheric Background Elements -->
-		<div class="fixed top-[-50px] left-[-50px] w-[300px] h-[300px] rounded-full bg-primary-container blur-[100px] -z-10 opacity-[0.08] pointer-events-none"></div>
-		<!-- ============================== -->
-		<!-- Architectural Pulse Header     -->
-		<!-- ============================== -->
-		<header class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-6" data-nosnippet>
-			<nav class="pill-nav-glass w-full max-w-7xl flex items-center">
-				<!-- Left: Mobile Search / Desktop Logo -->
-				<div class="flex-1 lg:flex-initial lg:w-1/4 flex items-center">
-					<button @click="searchOpen = !searchOpen" 
-							class="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
-						{{ icon('search', 'w-5 h-5') }}
-					</button>
-					<div class="hidden lg:flex items-center">
-						<a href="{{ site.url }}" class="flex items-center group">
-							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-14 w-auto object-contain transition-transform group-hover:scale-105">
-						</a>
-					</div>
-				</div>
-
-				<!-- Center: Mobile Logo / Desktop Menu -->
-				<div class="flex-1 lg:w-1/2 flex justify-center items-center">
-					<!-- Mobile Logo -->
-					<div class="lg:hidden">
-						<a href="{{ site.url }}" class="flex items-center">
-							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-10 w-auto object-contain">
-						</a>
-					</div>
-					<!-- Desktop Menu -->
-					<div class="hidden lg:flex items-center gap-8">
-						{% set menu_items = (menu ? menu.get_items : null) ?: categories_menu %}
-						{% for item in menu_items %}
-							<a href="{{ item.link }}" 
-							   class="text-sm font-semibold text-on-surface/70 hover:text-primary transition-colors tracking-tight">
-								{{ item.title }}
-							</a>
-						{% endfor %}
-					</div>
-				</div>
-
-				<!-- Right: Mobile Menu / Desktop Actions -->
-				<div class="flex-1 lg:flex-initial lg:w-1/4 flex items-center justify-end gap-4">
-					<!-- Desktop Actions (Search + Social) -->
-					<div class="hidden lg:flex items-center gap-4">
-						<button @click="searchOpen = !searchOpen" 
-								class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
-							{{ icon('search', 'w-5 h-5') }}
-						</button>
-						<div class="flex items-center gap-1">
-							<a href="https://www.facebook.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="Facebook">
-								{{ icon('facebook', 'w-5 h-5') }}
-							</a>
-							<a href="https://x.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="X (Twitter)">
-								{{ icon('twitter-x', 'w-5 h-5') }}
-							</a>
-							<a href="https://instagram.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="Instagram">
-								{{ icon('instagram', 'w-5 h-5') }}
-							</a>
-						</div>
-					</div>
-
-					<!-- Mobile Menu Trigger -->
-					<button @click="mobileMenuOpen = true" 
-							class="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
-						{{ icon('list', 'w-6 h-6') }}
-					</button>
-				</div>
-			</nav>
-		</header>
+		<!-- Architectural Pulse Header -->
+		{% include "partials/header.twig" %}
 
 		<!-- ============================== -->
 		<!-- Main Content Canvas            -->
 		<!-- ============================== -->
-		<main id="main-content" class="pt-32 px-6 pb-20 max-w-7xl mx-auto">
-			{% block content %}
-				<p>A&uacute;n no hay contenido.</p>
-			{% endblock %}
+		<main id="main-content" class="pt-8 md:pt-16 pb-20">
+			<div class="max-w-7xl mx-auto px-6">
+				{% block content %}
+					<p>A&uacute;n no hay contenido.</p>
+				{% endblock %}
+			</div>
 		</main>
 
 		<!-- Mobile Navigation Drawer -->
 		{% include "partials/mobile-menu.twig" %}
 
-		<!-- ============================== -->
-		<!-- Footer                         -->
-		<!-- ============================== -->
-		<footer class="bg-surface-container-lowest mt-24 pt-20 pb-12 relative z-10 border-t border-on-surface/5">
-			<div class="container mx-auto max-w-7xl px-6">
-				<div class="flex flex-col items-center justify-center gap-12 mb-16">
-					<!-- Branding Section (Centered) -->
-					<div class="flex flex-col items-center gap-6">
-						<a href="{{ site.url }}" class="flex-shrink-0">
-							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-16 w-auto object-contain transition-transform hover:scale-105">
-						</a>
-						<div class="flex items-center gap-6">
-							<a href="https://www.facebook.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-primary hover:text-white transition-all shadow-sm">
-								{{ icon('facebook', 'w-5 h-5') }}
-							</a>
-							<a href="https://x.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-black hover:text-white transition-all shadow-sm">
-								{{ icon('twitter-x', 'w-5 h-5') }}
-							</a>
-							<a href="https://instagram.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-[#E1306C] hover:text-white transition-all shadow-sm">
-								{{ icon('instagram', 'w-5 h-5') }}
-							</a>
-						</div>
-					</div>
-				</div>
-
-				<div class="pt-8 border-t border-on-surface/5 flex items-center justify-center">
-					<p class="label-pulse text-on-surface/40 text-[10px] tracking-[0.1em]">
-						&copy; {{ "now"|date("Y") }} DIARIO NACIONAL. TODOS LOS DERECHOS RESERVADOS.
-					</p>
-				</div>
-			</div>
-		</footer>
+		<!-- Footer -->
+		{% include "partials/footer.twig" %}
 
 		<!-- ============================== -->
 		<!-- Search Overlay Modal           -->

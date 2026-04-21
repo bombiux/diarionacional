@@ -69,6 +69,12 @@ $context['posts_farandula'] = Timber::get_posts([
     'posts_per_page' => 2
 ]);
 
+// 9.5 Turismo (1 post for specialized hero)
+$context['posts_turismo'] = Timber::get_posts([
+    'category_name' => 'turismo',
+    'posts_per_page' => 1
+]);
+
 // 10. Análisis (1 post)
 $context['latest_analisis'] = Timber::get_post([
     'category_name' => 'analisis',
