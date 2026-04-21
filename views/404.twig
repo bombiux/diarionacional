@@ -1,0 +1,27 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<section class="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 w-full">
+    <div class="relative mb-8">
+        <h1 class="text-9xl font-black text-surface-container-high dark:text-zinc-800 drop-shadow-sm select-none">404</h1>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <span class="bg-primary text-white text-xs font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full shadow-lg">Extraviado</span>
+        </div>
+    </div>
+    
+    <h2 class="text-3xl lg:text-4xl font-bold text-on-background dark:text-white max-w-2xl leading-tight mb-4">No pudimos encontrar la página que buscas.</h2>
+    <p class="text-slate-500 dark:text-zinc-400 max-w-md mx-auto mb-10">Es posible que el enlace esté roto o que el artículo haya sido movido. Intenta buscarlo usando nuestra herramienta.</p>
+    
+    <div class="w-full max-w-md mx-auto relative group">
+        <form action="{{ site.url }}" method="get" class="relative">
+            {{ icon('search', 'w-5 h-5 absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-hover:text-primary transition-colors')|raw }}
+            <input type="search" name="s" placeholder="Buscar en el archivo..." class="w-full pl-14 pr-6 py-4 bg-white dark:bg-zinc-800 rounded-2xl border border-slate-200 dark:border-zinc-700 text-on-surface dark:text-zinc-200 focus:outline-none focus:border-primary shadow-sm hover:shadow-md transition-all">
+        </form>
+    </div>
+    
+    <a href="{{ site.url }}" class="mt-8 flex items-center justify-center gap-2 group text-sm font-bold uppercase tracking-widest text-primary hover:bg-red-50 dark:hover:bg-red-900/20 px-6 py-3 rounded-xl transition-colors">
+        {{ icon('arrow-left', 'w-5 h-5 group-hover:-translate-x-1 transition-transform')|raw }}
+        Volver a la Portada
+    </a>
+</section>
+{% endblock %}

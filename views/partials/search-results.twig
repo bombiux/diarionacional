@@ -1,0 +1,47 @@
+{% if search_results|length > 0 %}
+    <div class="mt-8 flex flex-col gap-4">
+        {% for result in search_results %}
+        <a href="{{ result.url }}" class="flex items-center gap-4 group hover:bg-red-50 dark:hover:bg-zinc-800/50 p-3 rounded-2xl transition-colors">
+            {% if result.thumbnail %}
+            <div class="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-surface-container">
+                <img src="{{ result.thumbnail }}" alt="{{ result.title }}" class="w-full h-full object-cover">
+            </div>
+            {% else %}
+            <div class="w-16 h-16 shrink-0 rounded-xl bg-surface-container flex items-center justify-center text-slate-300">
+                {{ icon('newspaper', 'w-6 h-6')|raw }}
+            </div>
+            {% endif %}
+            
+            <div class="flex flex-col flex-1 min-w-0">
+                {% if result.category is not empty %}
+                <span class="text-[8px] font-bold text-primary uppercase tracking-[0.2em] truncate">{{ result.category|first }}</span>
+                {% endif %}
+                <h4 class="text-sm font-bold text-on-surface dark:text-zinc-200 truncate group-hover:text-primary transition-colors">
+                    {% if result._formatted.title is defined %}
+                        {{ result._formatted.title|raw }}
+                    {% else %}
+                        {{ result.title }}
+                    {% endif %}
+                </h4>
+                <p class="text-xs text-slate-500 truncate mt-0.5">
+                    {% if result._formatted.excerpt is defined %}
+                        {{ result._formatted.excerpt|raw }}
+                    {% else %}
+                        {{ result.excerpt }}
+                    {% endif %}
+                </p>
+            </div>
+        </a>
+        {% endfor %}
+        
+        <a href="{{ site.url }}/?s={{ search_query }}" class="mt-2 text-center text-xs font-bold text-primary hover:underline">
+            Ver todos los resultados para "{{ search_query }}"
+        </a>
+    </div>
+{% else %}
+    <div class="mt-8 text-center text-slate-500 px-4 py-8">
+        {{ icon('search', 'w-10 h-10 mb-2 text-slate-300')|raw }}
+        <p class="text-sm">No encontramos resultados para "<strong>{{ search_query }}</strong>".</p>
+        <p class="text-xs mt-1">Prueba con otros términos de búsqueda.</p>
+    </div>
+{% endif %}

@@ -1,0 +1,195 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<!-- Archivo de Historia -->
+<div class="max-w-6xl mx-auto pt-8 pb-24">
+
+    <!-- Page Header -->
+    <div class="mb-16">
+        <div class="flex items-center gap-3 mb-4">
+            {{ icon('book', 'w-8 h-8 text-primary')|raw }}
+            <h1 class="text-4xl font-bold tracking-tight text-on-background">Archivo de Historia</h1>
+        </div>
+        <p class="text-lg text-slate-500 max-w-2xl">
+            Relatos que forjaron nuestra identidad, cr&oacute;nicas del pasado y voces que preservan la memoria nacional.
+        </p>
+    </div>
+
+    {# ============================== #}
+    {# Historia                       #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('clock-history', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Historia</h2>
+            </div>
+            <a href="{{ site.url }}/category/historia" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_historia %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_historia %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Historia' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Hechos Hist&oacute;ricos        #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('flag', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Hechos Hist&oacute;ricos</h2>
+            </div>
+            <a href="{{ site.url }}/category/hechos-historicos" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_hechos_historicos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_hechos_historicos %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Hechos Hist&oacute;ricos' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Ideario Sandinista              #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('journal-text', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Ideario</h2>
+            </div>
+            <a href="{{ site.url }}/category/ideario" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_ideario %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_ideario %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Ideario' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Textos                          #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('file-text', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Textos</h2>
+            </div>
+            <a href="{{ site.url }}/category/textos" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_textos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_textos %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Textos' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Un D&iacute;a Como Hoy           #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('calendar-event', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Un D&iacute;a Como Hoy</h2>
+            </div>
+            <a href="{{ site.url }}/category/un-dia-como-hoy-nacional" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_undia %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_undia %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Un d&iacute;a como hoy' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Testimonios                     #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('mic', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Testimonios</h2>
+            </div>
+            <a href="{{ site.url }}/category/testimonios" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_testimonios %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_testimonios %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Testimonios' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Dossier                         #}
+    {# ============================== #}
+    <section class="mb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('folder-fill', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Dossier</h2>
+            </div>
+            <a href="{{ site.url }}/category/dossier" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_dossier %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_dossier %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Dossier' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+    {# ============================== #}
+    {# Biograf&iacute;as                #}
+    {# ============================== #}
+    <section>
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                {{ icon('person', 'w-6 h-6 text-primary')|raw }}
+                <h2 class="text-2xl font-bold text-on-surface">Biograf&iacute;as</h2>
+            </div>
+            <a href="{{ site.url }}/category/biografias" class="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Ver todo</a>
+        </div>
+        {% if posts_biografias %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for post in posts_biografias %}
+                {% include 'partials/card-news.twig' with { post: post, category: 'Biograf&iacute;as' } %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-400 italic">No hay art&iacute;culos disponibles en esta secci&oacute;n.</p>
+        {% endif %}
+    </section>
+
+</div>
+{% endblock %}

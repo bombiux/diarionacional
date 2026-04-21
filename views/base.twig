@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html {{ site.language_attributes }} class="light">
+	<head>
+		<meta charset="{{ site.charset }}"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script>
+			if (localStorage.getItem('darkMode') === 'true') {
+document.documentElement.classList.add('dark');
+} else {
+document.documentElement.classList.remove('dark');
+}
+		</script>
+
+		<style>
+			/* CSS Crítico para evitar parpadeos (FOUC) */
+			[x-cloak] {
+				display: none !important;
+			}
+
+			/* Estabilizar tamaño de iconos antes de que Tailwind cargue */
+			svg {
+				display: inline-block;
+				vertical-align: middle;
+				shape-rendering: inherit;
+				flex-shrink: 0;
+			}
+		</style>
+		<link rel="icon" type="image/png" href="{{ theme.link }}/assets/img/favicon.png">
+		
+		{# Typography: Manrope & Inter #}
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+
+		{{ function('wp_head') }}
+	</head>
+	<body
+		class="{{ body_class }} bg-surface min-h-screen text-on-surface dark:bg-zinc-900 dark:text-zinc-100 selection:bg-primary selection:text-white overflow-x-hidden antialiased" x-data="{
+			            darkMode: localStorage.getItem('darkMode') === 'true',
+			            mobileMenuOpen: false,
+			            searchOpen: false,
+			            searchQuery: '',
+						// Login Modal State
+						loginModalOpen: false,
+						authLoading: false,
+						authError: '',
+						authSuccess: '',
+						authForm: {
+							username: '',
+							password: '',
+							remember: false
+						},
+			            init() {
+			                this.$watch('darkMode', val => {
+			                    localStorage.setItem('darkMode', val);
+			                    document.documentElement.classList.toggle('dark', val);
+			                })
+			            },
+						async submitLogin() {
+							this.authLoading = true;
+							this.authError = '';
+							this.authSuccess = '';
+							
+							try {
+								const formData = new FormData();
+								formData.append('action', 'ajax_login');
+								formData.append('username', this.authForm.username);
+								formData.append('password', this.authForm.password);
+								formData.append('remember', this.authForm.remember);
+								formData.append('security', '{{ login_nonce }}');
+
+								const response = await fetch('{{ ajax_url }}', {
+									method: 'POST',
+									body: formData
+								});
+								
+								const result = await response.json();
+								
+								if (result.success) {
+									this.authSuccess = result.data.message;
+									setTimeout(() => {
+										window.location.reload();
+									}, 1000);
+								} else {
+									this.authError = result.data.message;
+									this.authLoading = false;
+								}
+							} catch (error) {
+								this.authError = 'Hubo un problema de conexión. Inténtalo de nuevo.';
+								this.authLoading = false;
+							}
+						}
+			        }" @keydown.escape.window="mobileMenuOpen = false; searchOpen = false" :class="{ 'overflow-hidden': mobileMenuOpen || searchOpen }">
+
+		<!-- Skip to content (A11Y-05) -->
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary focus:text-white focus:px-6 focus:py-3 focus:rounded-full focus:font-bold focus:text-sm focus:shadow-xl">Saltar al contenido</a>
+
+		<!-- Atmospheric Background Elements -->
+		<div class="fixed top-[-50px] left-[-50px] w-[300px] h-[300px] rounded-full bg-primary-container blur-[100px] -z-10 opacity-[0.08] pointer-events-none"></div>
+		<!-- ============================== -->
+		<!-- Architectural Pulse Header     -->
+		<!-- ============================== -->
+		<header class="fixed top-0 left-0 right-0 z-50 flex justify-center pt-6 px-6" data-nosnippet>
+			<nav class="pill-nav-glass w-full max-w-7xl flex items-center">
+				<!-- Left: Mobile Search / Desktop Logo -->
+				<div class="flex-1 lg:flex-initial lg:w-1/4 flex items-center">
+					<button @click="searchOpen = !searchOpen" 
+							class="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
+						{{ icon('search', 'w-5 h-5') }}
+					</button>
+					<div class="hidden lg:flex items-center">
+						<a href="{{ site.url }}" class="flex items-center group">
+							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-14 w-auto object-contain transition-transform group-hover:scale-105">
+						</a>
+					</div>
+				</div>
+
+				<!-- Center: Mobile Logo / Desktop Menu -->
+				<div class="flex-1 lg:w-1/2 flex justify-center items-center">
+					<!-- Mobile Logo -->
+					<div class="lg:hidden">
+						<a href="{{ site.url }}" class="flex items-center">
+							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-10 w-auto object-contain">
+						</a>
+					</div>
+					<!-- Desktop Menu -->
+					<div class="hidden lg:flex items-center gap-8">
+						{% set menu_items = (menu ? menu.get_items : null) ?: categories_menu %}
+						{% for item in menu_items %}
+							<a href="{{ item.link }}" 
+							   class="text-sm font-semibold text-on-surface/70 hover:text-primary transition-colors tracking-tight">
+								{{ item.title }}
+							</a>
+						{% endfor %}
+					</div>
+				</div>
+
+				<!-- Right: Mobile Menu / Desktop Actions -->
+				<div class="flex-1 lg:flex-initial lg:w-1/4 flex items-center justify-end gap-4">
+					<!-- Desktop Actions (Search + Social) -->
+					<div class="hidden lg:flex items-center gap-4">
+						<button @click="searchOpen = !searchOpen" 
+								class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
+							{{ icon('search', 'w-5 h-5') }}
+						</button>
+						<div class="flex items-center gap-1">
+							<a href="https://www.facebook.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="Facebook">
+								{{ icon('facebook', 'w-5 h-5') }}
+							</a>
+							<a href="https://x.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="X (Twitter)">
+								{{ icon('twitter-x', 'w-5 h-5') }}
+							</a>
+							<a href="https://instagram.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high hover:text-primary transition-colors" title="Instagram">
+								{{ icon('instagram', 'w-5 h-5') }}
+							</a>
+						</div>
+					</div>
+
+					<!-- Mobile Menu Trigger -->
+					<button @click="mobileMenuOpen = true" 
+							class="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-on-surface/60 hover:bg-surface-container-high transition-colors">
+						{{ icon('list', 'w-6 h-6') }}
+					</button>
+				</div>
+			</nav>
+		</header>
+
+		<!-- ============================== -->
+		<!-- Main Content Canvas            -->
+		<!-- ============================== -->
+		<main id="main-content" class="pt-32 px-6 pb-20 max-w-7xl mx-auto">
+			{% block content %}
+				<p>A&uacute;n no hay contenido.</p>
+			{% endblock %}
+		</main>
+
+		<!-- Mobile Navigation Drawer -->
+		{% include "partials/mobile-menu.twig" %}
+
+		<!-- ============================== -->
+		<!-- Footer                         -->
+		<!-- ============================== -->
+		<footer class="bg-surface-container-lowest mt-24 pt-20 pb-12 relative z-10 border-t border-on-surface/5">
+			<div class="container mx-auto max-w-7xl px-6">
+				<div class="flex flex-col items-center justify-center gap-12 mb-16">
+					<!-- Branding Section (Centered) -->
+					<div class="flex flex-col items-center gap-6">
+						<a href="{{ site.url }}" class="flex-shrink-0">
+							<img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-16 w-auto object-contain transition-transform hover:scale-105">
+						</a>
+						<div class="flex items-center gap-6">
+							<a href="https://www.facebook.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-primary hover:text-white transition-all shadow-sm">
+								{{ icon('facebook', 'w-5 h-5') }}
+							</a>
+							<a href="https://x.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-black hover:text-white transition-all shadow-sm">
+								{{ icon('twitter-x', 'w-5 h-5') }}
+							</a>
+							<a href="https://instagram.com/diarionacional" target="_blank" rel="noopener" class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/40 hover:bg-[#E1306C] hover:text-white transition-all shadow-sm">
+								{{ icon('instagram', 'w-5 h-5') }}
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="pt-8 border-t border-on-surface/5 flex items-center justify-center">
+					<p class="label-pulse text-on-surface/40 text-[10px] tracking-[0.1em]">
+						&copy; {{ "now"|date("Y") }} DIARIO NACIONAL. TODOS LOS DERECHOS RESERVADOS.
+					</p>
+				</div>
+			</div>
+		</footer>
+
+		<!-- ============================== -->
+		<!-- Search Overlay Modal           -->
+		<!-- ============================== -->
+		<div x-show="searchOpen" 
+			 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+			 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" 
+			 class="fixed inset-0 z-[100] flex items-start justify-center pt-32 px-6" @click.self="searchOpen = false" x-cloak>
+			
+			<!-- Backdrop -->
+			<div class="absolute inset-0 bg-surface/90 backdrop-blur-2xl"></div>
+
+			<!-- Search Container -->
+			<div class="relative w-full max-w-3xl transform transition-all">
+				<!-- Close -->
+				<button @click="searchOpen = false" class="absolute -top-16 right-0 w-12 h-12 rounded-full bg-white flex items-center justify-center text-on-surface/40 hover:text-primary transition-colors shadow-2xl">
+					{{ icon('x-lg', 'w-6 h-6') }}
+				</button>
+
+				<form action="{{ site.url }}" method="get" role="search" class="relative group">
+					<span class="absolute left-6 top-1/2 -translate-y-1/2 text-primary">
+						{{ icon('search', 'w-8 h-8') }}
+					</span>
+					<input type="search" name="s" x-model="searchQuery" 
+						   placeholder="Explora las noticias de hoy..." 
+						   class="w-full pl-18 pr-18 py-8 bg-white rounded-DEFAULT border-none text-2xl font-headline font-extrabold text-on-surface placeholder:text-on-surface/20 focus:ring-4 focus:ring-primary/5 shadow-2xl transition-all" 
+						   autocomplete="off" required>
+					<button type="button" x-show="searchQuery.length > 0" @click="searchQuery = ''" class="absolute right-6 top-1/2 -translate-y-1/2 p-2 text-on-surface/20 hover:text-primary transition-colors">
+						{{ icon('x-circle-fill', 'w-6 h-6') }}
+					</button>
+				</form>
+
+				<div class="mt-8 flex flex-wrap items-center gap-4 justify-center" x-show="searchQuery.length === 0">
+					<span class="label-pulse text-tertiary">Tendencias:</span>
+					{% for item in menu.get_items|slice(0, 4) %}
+						<a href="{{ site.url }}/?s={{ item.title|url_encode }}" class="badge-pill bg-surface-container-low text-on-surface hover:bg-primary hover:text-white transition-all">{{ item.title }}</a>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+		<!-- Login Modal -->
+		{% include "partials/login-modal.twig" %}
+
+		{{ function('wp_footer') }}
+	</body>
+</html>

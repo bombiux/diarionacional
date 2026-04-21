@@ -1,0 +1,69 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<!-- Search Results Page -->
+<div class="max-w-6xl mx-auto pt-8 pb-24">
+    <!-- Header -->
+    <div class="mb-12">
+        <div class="flex items-center gap-3 mb-4">
+            {{ icon('search', 'w-8 h-8 text-primary')|raw }}
+            <h1 class="text-4xl font-bold tracking-tight text-on-background">Resultados de búsqueda</h1>
+        </div>
+
+        {% if search_query %}
+        <p class="text-lg text-slate-500">
+            Mostrando {{ posts|length }} de {{ total_results }} resultados para "<span class="text-primary font-semibold">{{ search_query }}</span>"
+        </p>
+        {% else %}
+        <p class="text-lg text-slate-500">No se proporcionó un término de búsqueda.</p>
+        {% endif %}
+    </div>
+
+    {% if posts %}
+    <!-- Results Grid using existing card-news partial -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for post in posts %}
+        {% include 'partials/card-news.twig' with {
+            post: post,
+            category: post.terms({taxonomy: 'category', number: 1})|first.name|default('')
+        } %}
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if posts.pagination.pages|length > 1 %}
+    <div class="flex justify-center gap-3 mt-12 overflow-x-auto pb-2">
+        {% for page in posts.pagination.pages %}
+            {% if page.link %}
+            <a href="{{ page.link }}&s={{ search_query|url_encode }}"
+               class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all {% if page.current %}bg-primary text-white shadow-md shadow-primary/40{% else %}bg-white text-slate-500 hover:bg-red-50 hover:text-primary border border-slate-200{% endif %}">
+                {{ page.title }}
+            </a>
+            {% elseif page.current %}
+            <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-primary text-white shadow-md shadow-primary/40">{{ page.title }}</span>
+            {% else %}
+            <span class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm text-slate-300">{{ page.title }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No Results -->
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center mb-6">
+            {{ icon('search', 'w-12 h-12 text-slate-300')|raw }}
+        </div>
+        <h2 class="text-2xl font-bold text-on-background mb-3">No se encontraron resultados</h2>
+        <p class="text-slate-500 max-w-md mb-8">
+            Intenta con otros términos de búsqueda o explora nuestras categorías principales.
+        </p>
+        <div class="flex flex-wrap gap-3 justify-center">
+            <a href="{{ site.url }}" class="px-6 py-3 bg-primary text-white rounded-full font-semibold text-sm hover:bg-secondary transition-colors">
+                Volver al inicio
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

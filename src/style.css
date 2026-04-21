@@ -1,0 +1,64 @@
+/* Tipografías e iconos cargados vía CDN en base.twig */
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-surface text-on-surface;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline font-bold tracking-[-0.02em];
+  }
+
+  /* Alpine.js x-cloak: hide elements until Alpine is ready */
+  [x-cloak] {
+    display: none !important;
+  }
+}
+
+@layer components {
+  /* Architectural Pulse: Tonal Layering over Lines */
+  .card-pulse {
+    @apply bg-surface-container-lowest rounded-DEFAULT transition-all duration-300;
+    box-shadow: 0 12px 32px -4px rgba(32, 50, 86, 0.08);
+  }
+
+  .card-pulse:hover {
+    @apply bg-surface-container-high;
+  }
+
+  .pill-nav-glass {
+    @apply bg-surface-container/80 backdrop-blur-[12px] rounded-full px-6 py-2 flex items-center gap-6 border border-white/20;
+  }
+
+  .btn-primary-gradient {
+    @apply bg-gradient-to-br from-primary to-primary-dim text-white rounded-DEFAULT px-6 py-2 font-bold transition-all active:scale-95 shadow-lg shadow-primary/20;
+  }
+
+  .btn-secondary-pulse {
+    @apply bg-surface-container-highest text-primary rounded-DEFAULT px-6 py-2 font-bold hover:bg-surface-container-high transition-all;
+  }
+
+  .badge-pill {
+    @apply rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.05em];
+  }
+
+  /* No-Line Rule sectioning */
+  .section-alt {
+    @apply bg-surface-container-low;
+  }
+
+  /* Typography utilities */
+  .label-pulse {
+    @apply font-sans font-medium uppercase tracking-[0.05em] text-[12px];
+  }
+
+  .text-shadow-editorial {
+    text-shadow: 0 2px 10px rgba(32, 50, 86, 0.1);
+  }
+}
+

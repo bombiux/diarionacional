@@ -1,0 +1,172 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto pt-4 pb-24">
+
+    {# ============================== #}
+    {# Author Header                 #}
+    {# ============================== #}
+    <header class="mb-12">
+        {# Breadcrumbs #}
+        <nav class="flex items-center gap-2 text-xs text-slate-400 font-semibold uppercase tracking-widest mb-8">
+            <a href="{{ site.url }}" class="hover:text-primary transition-colors">Inicio</a>
+            {{ icon('chevron-right', 'w-3.5 h-3.5')|raw }}
+            <span class="text-on-surface">Autor</span>
+            {{ icon('chevron-right', 'w-3.5 h-3.5')|raw }}
+            <span class="text-on-surface">{{ author.name }}</span>
+        </nav>
+
+        {# Author Profile Card #}
+        <div class="glass-card rounded-[2rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 transition-transform group-hover:scale-[1.6] group-hover:rotate-6">
+                {{ icon('person-bounding-box', 'w-32 h-32 text-primary')|raw }}
+            </div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-8">
+                {# Author Avatar #}
+                <div class="w-24 h-24 md:w-32 md:h-32 rounded-[2rem] overflow-hidden border-4 border-white dark:border-zinc-800 shadow-xl">
+                    {% if author.avatar %}
+                        <img src="{{ author.avatar }}" alt="{{ author.name }}" class="w-full h-full object-cover">
+                    {% else %}
+                        <div class="w-full h-full bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                            {{ icon('person-fill', 'w-12 h-12 text-slate-300')|raw }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex-1 text-center md:text-left">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">
+                            {{ author.name }}
+                        </h1>
+                        <div class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 w-fit mx-auto md:mx-0">
+                            {{ icon('newspaper', 'w-4 h-4 text-primary')|raw }}
+                            <span class="text-xs font-bold text-primary uppercase tracking-widest">{{ total_posts }} artículos</span>
+                        </div>
+                    </div>
+                    
+                    {% set bio = author.description ?: author.meta('description') %}
+                    {% if bio %}
+                        <p class="text-slate-500 dark:text-zinc-400 text-lg max-w-2xl leading-relaxed mb-6">
+                            {{ bio }}
+                        </p>
+                    {% endif %}
+
+                    {# Author Meta/Social #}
+                    <div class="flex flex-wrap justify-center md:justify-start gap-6">
+                        {% if author.email %}
+                            <div class="flex items-center gap-2 text-slate-400">
+                                {{ icon('envelope', 'w-4 h-4')|raw }}
+                                <span class="text-sm font-medium">{{ author.email }}</span>
+                            </div>
+                        {% endif %}
+                        <div class="flex items-center gap-2 text-slate-400">
+                            {{ icon('calendar-check', 'w-4 h-4')|raw }}
+                            <span class="text-sm font-medium">Colaborador desde {{ author.user_registered|date('Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    {# ============================== #}
+    {# Featured Post (Page 1 only)    #}
+    {# ============================== #}
+    {% if featured_post %}
+    <section class="relative w-full h-[420px] rounded-[2rem] overflow-hidden glass-card shadow-2xl mb-12 group">
+        <img
+            src="{{ featured_post.thumbnail.src|default('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop') }}"
+            alt="{{ featured_post.title }}"
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent lg:bg-gradient-to-r lg:from-black/70 lg:via-transparent lg:to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-6 lg:p-12 w-full lg:max-w-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-primary text-white px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Lo más reciente</span>
+                <span class="text-white/60 text-xs font-semibold">{{ featured_post.date|date('d M Y') }}</span>
+            </div>
+            <h2 class="text-2xl lg:text-4xl font-bold text-white tracking-tighter mb-3 leading-tight">{{ featured_post.title }}</h2>
+            <p class="text-white/70 text-sm lg:text-base mb-6 line-clamp-2">{{ featured_post.preview.read_more('') }}</p>
+            <a href="{{ featured_post.link }}" class="inline-flex items-center gap-2 bg-primary-container text-white rounded-full px-8 py-3 font-bold text-sm shadow-lg shadow-red-900/20 active:scale-95 transition-transform hover:bg-primary">
+                Leer artículo
+                {{ icon('arrow-right', 'w-5 h-5')|raw }}
+            </a>
+        </div>
+    </section>
+    {% endif %}
+
+    {# ============================== #}
+    {# Posts Grid                      #}
+    {# ============================== #}
+    {% if posts|length > 0 %}
+    <section>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for post in posts %}
+                {# Skip the featured post on page 1 #}
+                {% if not (featured_post and loop.first) %}
+                    {% include 'partials/card-news.twig' with {
+                        post: post,
+                        category: post.terms({taxonomy: 'category'})|first.name|default('')
+                    } %}
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {# ============================== #}
+        {# Pagination                      #}
+        {# ============================== #}
+        {% if posts.pagination.pages|length > 1 %}
+        <nav class="flex justify-center items-center gap-2 mt-16" aria-label="Paginación">
+            {# Previous page #}
+            {% if posts.pagination.prev %}
+            <a href="{{ posts.pagination.prev.link }}"
+               class="flex items-center justify-center w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white/30 text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-red-50 transition-all shadow-sm"
+               aria-label="Página anterior">
+                {{ icon('chevron-left', 'w-5 h-5')|raw }}
+            </a>
+            {% endif %}
+
+            {# Page numbers #}
+            {% for page in posts.pagination.pages %}
+                {% if page.link %}
+                <a href="{{ page.link }}"
+                   class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all {% if page.current %}bg-primary text-white shadow-md shadow-primary/40{% else %}bg-white/70 backdrop-blur-xl text-slate-500 hover:bg-red-50 hover:text-primary border border-white/30 shadow-sm{% endif %}">
+                    {{ page.title }}
+                </a>
+                {% elseif page.current %}
+                <span class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold bg-primary text-white shadow-md shadow-primary/40">{{ page.title }}</span>
+                {% else %}
+                <span class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm text-slate-300">{{ page.title }}</span>
+                {% endif %}
+            {% endfor %}
+
+            {# Next page #}
+            {% if posts.pagination.next %}
+            <a href="{{ posts.pagination.next.link }}"
+               class="flex items-center justify-center w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white/30 text-slate-500 hover:text-primary hover:border-primary/30 hover:bg-red-50 transition-all shadow-sm"
+               aria-label="Página siguiente">
+                {{ icon('chevron-right', 'w-5 h-5')|raw }}
+            </a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </section>
+
+    {% else %}
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-28 h-28 rounded-full bg-white/70 backdrop-blur-xl border border-white/30 flex items-center justify-center mb-8 shadow-xl">
+            {{ icon('newspaper', 'w-16 h-16 text-slate-300')|raw }}
+        </div>
+        <h2 class="text-2xl font-bold text-on-surface mb-3">No hay artículos publicados</h2>
+        <p class="text-slate-500 max-w-md mb-10 leading-relaxed">
+            Este autor aún no ha publicado artículos. Explora otras secciones del periódico.
+        </p>
+        <a href="{{ site.url }}" class="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-full font-bold text-sm hover:bg-secondary transition-colors shadow-lg shadow-red-900/20">
+            {{ icon('house', 'w-5 h-5')|raw }}
+            Volver al inicio
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

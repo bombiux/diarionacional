@@ -1,0 +1,98 @@
+{# Mobile Navigation Drawer #}
+<div x-show="mobileMenuOpen"
+    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    @click="mobileMenuOpen = false"
+    class="lg:hidden fixed inset-0 bg-on-surface/20 z-40 backdrop-blur-sm"
+    x-cloak></div>
+
+<aside id="mobile-nav"
+    x-show="mobileMenuOpen"
+    x-transition:enter="transition ease-out duration-500" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-300" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
+    class="lg:hidden fixed top-0 bottom-0 left-0 w-[calc(100vw-4rem)] max-w-xs z-50 flex flex-col bg-surface shadow-2xl shadow-on-surface/10"
+    x-cloak>
+    
+    <!-- Header/Profile -->
+    <div class="p-8 pt-12 space-y-6">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-DEFAULT bg-surface-container-high flex items-center justify-center border-none overflow-hidden">
+                {% if user %}
+                    <img src="{{ user.avatar }}" alt="{{ user.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    {{ icon('person-circle', 'w-8 h-8 text-primary/40') }}
+                {% endif %}
+            </div>
+            <div class="min-w-0">
+                <h2 class="text-lg font-headline font-extrabold text-on-surface tracking-tight truncate">{{ user ? user.name : "Invitado" }}</h2>
+                <p class="label-pulse text-on-surface/40 uppercase tracking-widest text-[9px]">{{ user.roles|first|default('Bienvenido') }}</p>
+            </div>
+        </div>
+
+        {% if not user %}
+            <button @click.prevent="loginModalOpen = true; mobileMenuOpen = false" class="w-full btn-primary-gradient py-3 text-xs">
+                Acceso Suscriptores
+            </button>
+        {% endif %}
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 space-y-1 overflow-y-auto font-sans">
+        {% set is_home = function('is_front_page') %}
+        <a href="{{ site.url }}" class="flex items-center gap-4 px-6 py-4 rounded-DEFAULT transition-all {{ is_home ? 'bg-primary/5 text-primary' : 'text-on-surface/70 hover:bg-surface-container-low' }}">
+            {{ icon(is_home ? 'house-fill' : 'house', 'w-5 h-5') }}
+            <span class="text-sm font-bold uppercase tracking-widest">Inicio</span>
+        </a>
+
+        {% set menu_items = (menu ? menu.get_items : null) ?: categories_menu %}
+        {% for item in menu_items %}
+            {% set is_current = item.current or item.current_item_ancestor %}
+            <a href="{{ item.link }}" class="flex items-center gap-4 px-6 py-4 rounded-DEFAULT transition-all {{ is_current ? 'bg-primary/5 text-primary' : 'text-on-surface/70 hover:bg-surface-container-low' }}">
+                {% set icon_name = 'file-earmark-text' %}
+                {% set title_lower = item.title|lower %}
+                {% if 'nacional' in title_lower %}{% set icon_name = 'globe-americas' %}
+                {% elseif 'internacional' in title_lower %}{% set icon_name = 'globe' %}
+                {% elseif 'historia' in title_lower %}{% set icon_name = 'clock-history' %}
+                {% elseif 'discurso' in title_lower %}{% set icon_name = 'mic' %}
+                {% elseif 'eco' in title_lower %}{% set icon_name = 'cash-stack' %}
+                {% elseif 'analisis' in title_lower %}{% set icon_name = 'graph-up' %}
+                {% elseif 'deporte' in title_lower %}{% set icon_name = 'trophy' %}
+                {% elseif 'tecno' in title_lower %}{% set icon_name = 'cpu' %}
+                {% elseif 'fara' in title_lower %}{% set icon_name = 'stars' %}
+                {% endif %}
+                {{ icon(icon_name, 'w-5 h-5 ' ~ (is_current ? 'text-primary' : 'text-on-surface/20')) }}
+                <span class="text-sm font-bold uppercase tracking-widest">{{ item.title }}</span>
+            </a>
+        {% endfor %}
+    </nav>
+
+    <!-- Footer Action -->
+    <div class="p-8 border-t border-on-surface/5 bg-surface-container-lowest space-y-6">
+        <div class="flex items-center justify-center gap-4">
+            <a href="https://www.facebook.com/diarionacional" target="_blank" rel="noopener" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/60 hover:text-primary transition-colors">
+                {{ icon('facebook', 'w-6 h-6') }}
+            </a>
+            <a href="https://x.com/diarionacional" target="_blank" rel="noopener" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/60 hover:text-primary transition-colors">
+                {{ icon('twitter-x', 'w-6 h-6') }}
+            </a>
+            <a href="https://instagram.com/diarionacional" target="_blank" rel="noopener" class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface/60 hover:text-primary transition-colors">
+                {{ icon('instagram', 'w-6 h-6') }}
+            </a>
+        </div>
+
+        {% if user %}
+            <a href="{{ function('wp_logout_url', site.url) }}" class="flex items-center justify-between group">
+                <span class="label-pulse text-tertiary">Finalizar Sesión</span>
+                {{ icon('box-arrow-right', 'w-5 h-5 text-tertiary/40 group-hover:text-tertiary') }}
+            </a>
+        {% else %}
+            <div class="flex items-center justify-between">
+                <span class="label-pulse text-on-surface/40">Diario Nacional &copy; {{ "now"|date("Y") }}</span>
+                <button @click="darkMode = !darkMode" class="w-10 h-10 rounded-DEFAULT bg-surface-container-high flex items-center justify-center text-on-surface/60">
+                    <template x-if="darkMode">{{ icon('sun-fill', 'w-4 h-4') }}</template>
+                    <template x-if="!darkMode">{{ icon('moon-stars-fill', 'w-4 h-4') }}</template>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</aside>

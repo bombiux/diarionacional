@@ -1,0 +1,164 @@
+{% extends "base.twig" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto pt-4 pb-24">
+
+    {# ============================== #}
+    {# Header                         #}
+    {# ============================== #}
+    <header class="mb-12">
+        {# Breadcrumbs #}
+        <nav class="flex items-center gap-2 text-xs text-slate-400 font-semibold uppercase tracking-widest mb-6">
+            <a href="{{ site.url }}" class="hover:text-primary transition-colors">Inicio</a>
+            {{ icon('chevron-right', 'w-3.5 h-3.5')|raw }}
+            <span class="text-on-surface">Galería</span>
+        </nav>
+
+        {# Title area #}
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                        {{ icon('images', 'w-6 h-6 text-primary')|raw }}
+                    </div>
+                    <div>
+                        <span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Galería Especial</span>
+                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface leading-none">
+                            {{ post.title }}
+                        </h1>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-sm text-slate-500 font-medium">
+                    <div class="flex items-center gap-1">
+                        {{ icon('calendar-event', 'w-4 h-4')|raw }}
+                        <span>{{ post.date|date('d F Y') }}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        {{ icon('images', 'w-4 h-4')|raw }}
+                        <span>{{ gallery_images|length }} Fotos</span>
+                    </div>
+                </div>
+            </div>
+            
+            {# Download All Button #}
+            {% if gallery_images|length > 0 %}
+            <a href="?download_all=true" class="mt-4 md:mt-0 inline-flex items-center gap-2 bg-primary-container hover:bg-primary text-white rounded-full px-6 py-2.5 font-bold text-xs shadow-lg shadow-red-900/20 active:scale-95 transition-all w-fit">
+                {{ icon('download', 'w-5 h-5')|raw }}
+                Descargar Galería (ZIP)
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    {# ============================== #}
+    {# Gallery Description            #}
+    {# ============================== #}
+    {% if gallery_description %}
+    <div class="prose max-w-4xl text-on-surface-variant mb-12 leading-relaxed text-lg">
+        {{ gallery_description|raw }}
+    </div>
+    {% endif %}
+
+    {# ============================== #}
+    {# Gallery Visuals & Lightbox     #}
+    {# ============================== #}
+    {% if gallery_images and gallery_images|length > 0 %}
+        
+    <div x-data="{ 
+            lightboxOpen: false, 
+            currentIdx: 0, 
+            images: [
+                {% for img in gallery_images %}
+                    '{{ img.src }}'{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ] 
+        }" 
+        @keydown.escape.window="lightboxOpen = false" 
+        @keydown.arrow-left.window="if(lightboxOpen) { currentIdx = (currentIdx > 0) ? currentIdx - 1 : images.length - 1 }" 
+        @keydown.arrow-right.window="if(lightboxOpen) { currentIdx = (currentIdx < images.length - 1) ? currentIdx + 1 : 0 }"
+        class="w-full">
+
+        {# Thumbnails Grid #}
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {% for img in gallery_images %}
+                <div class="relative aspect-square rounded-2xl overflow-hidden cursor-pointer group bg-surface-container shadow-sm border border-black/5" 
+                     @click="currentIdx = {{ loop.index0 }}; lightboxOpen = true">
+                    <img src="{{ img.src|resize(600, 600) }}" alt="Foto de {{ post.title }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Modal Lightbox #}
+        <div x-show="lightboxOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 backdrop-blur-none"
+             x-transition:enter-end="opacity-100 backdrop-blur-2xl"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 backdrop-blur-2xl"
+             x-transition:leave-end="opacity-0 backdrop-blur-none"
+             class="fixed inset-0 z-[100] bg-black/95 flex flex-col justify-center items-center select-none" 
+             x-cloak>
+             
+            {# Top Bar #}
+            <div class="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-[110] bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+                <div class="text-white font-semibold text-sm tracking-widest uppercase pointer-events-auto">
+                    <span x-text="currentIdx + 1"></span> / <span x-text="images.length"></span>
+                </div>
+                <div class="flex items-center gap-3 pointer-events-auto">
+                    <a :href="images[currentIdx]" download class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors flex items-center justify-center" aria-label="Descargar imagen completa" title="Descargar imagen">
+                        {{ icon('download', 'w-5 h-5')|raw }}
+                    </a>
+                    <button @click="lightboxOpen = false" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white text-white hover:text-black transition-colors flex items-center justify-center" title="Cerrar visor">
+                        {{ icon('x-lg', 'w-6 h-6')|raw }}
+                    </button>
+                </div>
+            </div>
+
+            {# Previous Button #}
+            <button @click.stop="currentIdx = (currentIdx > 0) ? currentIdx - 1 : images.length - 1" class="absolute left-4 lg:left-10 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-black/50 hover:bg-white text-white hover:text-black transition-colors flex items-center justify-center z-[110] border border-white/20">
+                {{ icon('chevron-left', 'w-8 h-8')|raw }}
+            </button>
+
+            {# Main Image Container #}
+            <div class="w-full h-full p-4 md:p-12 pb-24 md:pb-12 flex items-center justify-center relative" @click.self="lightboxOpen = false">
+                <template x-for="(imgSrc, index) in images" :key="index">
+                    <img x-show="currentIdx === index" 
+                         :src="imgSrc" 
+                         x-transition:enter="transition ease-out duration-300 transform"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="max-w-full max-h-[85vh] object-contain drop-shadow-2xl rounded-lg"
+                         alt="Previsualización de imagen">
+                </template>
+            </div>
+
+            {# Next Button #}
+            <button @click.stop="currentIdx = (currentIdx < images.length - 1) ? currentIdx + 1 : 0" class="absolute right-4 lg:right-10 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-black/50 hover:bg-white text-white hover:text-black transition-colors flex items-center justify-center z-[110] border border-white/20">
+                {{ icon('chevron-right', 'w-8 h-8')|raw }}
+            </button>
+            
+            {# Instructions #}
+            <div class="absolute bottom-6 left-0 w-full text-center text-white/40 text-xs tracking-widest font-bold uppercase hidden md:block">
+                Usa las flechas del teclado para navegar &bull; ESC para salir
+            </div>
+        </div>
+    </div>
+    
+    {% else %}
+    
+    {# Empty State #}
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-28 h-28 rounded-full bg-white/70 backdrop-blur-xl border border-white/30 flex items-center justify-center mb-8 shadow-xl">
+            {{ icon('image', 'w-16 h-16 text-slate-300')|raw }}
+        </div>
+        <h2 class="text-2xl font-bold text-on-surface mb-3">No hay imágenes en esta galería</h2>
+        <p class="text-slate-500 max-w-md mb-10 leading-relaxed">
+            Las fotos de esta galería aún no han sido seleccionadas o cargadas.
+        </p>
+    </div>
+    
+    {% endif %}
+
+</div>
+{% endblock %}

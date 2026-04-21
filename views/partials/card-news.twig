@@ -1,0 +1,62 @@
+<article class="card-pulse group relative flex flex-col h-full bg-surface-container-lowest">
+    <!-- Image Section -->
+    <div class="relative aspect-video overflow-hidden rounded-DEFAULT m-3">
+        {% if post.thumbnail %}
+            <img src="{{ post.thumbnail.src('diario-nacional-card')|default(site.theme.link ~ '/assets/img/no-image.jpg') }}" 
+                 alt="{{ post.title }}" 
+                 loading="lazy" 
+                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out">
+        {% else %}
+            <div class="w-full h-full bg-surface-container-low flex items-center justify-center">
+                {{ icon('newspaper', 'w-12 h-12 text-on-surface/10') }}
+            </div>
+        {% endif %}
+        
+        {# Category Badge (Glassmorphism) #}
+        {% set category = post.terms('category')|first %}
+        {% if category %}
+            <div class="absolute top-4 left-4 pill-nav-glass px-3 py-1 border-none bg-white/60 backdrop-blur-md">
+                <span class="label-pulse text-[9px] text-primary">{{ category.name }}</span>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Content Area -->
+    <div class="px-6 pb-8 pt-2 flex flex-col flex-1">
+        <!-- Metadata -->
+        <div class="flex items-center gap-3 mb-3">
+            <span class="label-pulse text-on-surface/40 text-[10px]">
+                {{ post.date|date('d M, Y') }}
+            </span>
+            <span class="w-1 h-1 rounded-full bg-on-surface/10"></span>
+            <span class="label-pulse text-on-surface/40 text-[10px]">
+                {{ post.author.name|default('Redacción') }}
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h3 class="text-xl lg:text-2xl font-headline font-extrabold leading-tight text-on-surface group-hover:text-primary transition-colors duration-300 mb-3 line-clamp-2">
+            <a href="{{ post.link }}" class="after:absolute after:inset-0">
+                {{ post.title }}
+            </a>
+        </h3>
+
+        <!-- Excerpt -->
+        <p class="text-on-surface/60 text-sm leading-relaxed line-clamp-2 lg:line-clamp-3 font-sans">
+            {{ post.excerpt|striptags|truncate(120) }}
+        </p>
+
+        <!-- Action (Aligned to Bottom) -->
+        <div class="mt-auto pt-6 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-primary font-bold text-[10px] uppercase tracking-widest group-hover:translate-x-1 transition-transform duration-300">
+                Leer artículo 
+                {{ icon('arrow-right', 'w-4 h-4') }}
+            </div>
+            
+            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                 <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                 <span class="label-pulse text-[8px] text-primary">Viral</span>
+            </div>
+        </div>
+    </div>
+</article>

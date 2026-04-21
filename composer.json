@@ -1,0 +1,27 @@
+{
+  "require": {
+    "timber/timber": "^2.3",
+    "vlucas/phpdotenv": "^5.6",
+    "resend/resend-php": "^1.1",
+    "meilisearch/meilisearch-php": "^1.16",
+    "jgrossi/corcel": "^6.0",
+    "nesbot/carbon": "^2.0",
+    "htmlburger/carbon-fields": "^3.6"
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "laravel/pint": "^0.1.2",
+    "itsgoingd/clockwork": "^5.3",
+    "symfony/var-dumper": "^6.0"
+  }
+}
