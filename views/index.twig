@@ -42,22 +42,14 @@
 	{# ========================================== #}
 	{# THE PULSE GRID: Tonal Sectioning          #}
 	{# ========================================== #}
-		<section class="section-alt -mx-6 px-6 py-24 rounded-3xl mb-24"> <div class="max-w-7xl mx-auto">
-			<div class="flex items-end justify-between mb-16">
-				<div class="space-y-2">
-					<span class="label-pulse text-secondary">Nacionales</span>
-					<h2 class="text-3xl md:text-4xl font-headline font-extrabold text-on-surface">Información de Impacto</h2>
-				</div>
-				<div class="hidden md:flex gap-4">
-					<span class="badge-pill bg-primary text-white">Todo</span>
-					<span class="badge-pill bg-surface-container-highest text-on-surface/60 hover:text-primary cursor-pointer transition-colors">Nacional</span>
-					<span class="badge-pill bg-surface-container-highest text-on-surface/60 hover:text-primary cursor-pointer transition-colors">Tech</span>
-				</div>
-			</div>
+		<section class="section-alt -mx-6 px-6 py-24 rounded-3xl mb-24"> <div class="max-w-6xl mx-auto">
 
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{% for post in posts_nacionales|slice(0, 3) %}
-					{% include "partials/card-editorial.twig" with {post: post} %}
+				{% set latest_mix = [posts_nacionales[0], posts_internacionales[0], posts_deportes[0]] %}
+				{% for post in latest_mix %}
+					{% if post %}
+						{% include "partials/card-pulse-modern.twig" with {post: post} %}
+					{% endif %}
 				{% endfor %}
 			</div>
 		</div>
@@ -91,11 +83,11 @@
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 					{% if latest_analisis %}
 						<div class="md:col-span-2">
-							{% include "partials/card-editorial.twig" with {post: latest_analisis} %}
+							{% include "partials/card-pulse-modern.twig" with {post: latest_analisis} %}
 						</div>
 					{% endif %}
 					{% for post in posts_internacionales|slice(0, 2) %}
-						{% include "partials/card-editorial.twig" with {post: post} %}
+						{% include "partials/card-pulse-modern.twig" with {post: post} %}
 					{% endfor %}
 				</div>
 			</div>
@@ -118,7 +110,7 @@
 					</div>
 					<div class="space-y-6">
 						{% for post in posts_ambiente %}
-							{% include "partials/card-editorial.twig" with {post: post, compact: true} %}
+							{% include "partials/card-pulse-modern.twig" with {post: post, compact: true} %}
 						{% endfor %}
 					</div>
 				</div>
@@ -133,7 +125,7 @@
 					</div>
 					<div class="space-y-6">
 						{% for post in posts_salud %}
-							{% include "partials/card-editorial.twig" with {post: post, compact: true} %}
+							{% include "partials/card-pulse-modern.twig" with {post: post, compact: true} %}
 						{% endfor %}
 					</div>
 				</div>
@@ -148,7 +140,7 @@
 					</div>
 					<div class="space-y-6">
 						{% for post in posts_agricultura %}
-							{% include "partials/card-editorial.twig" with {post: post, compact: true} %}
+							{% include "partials/card-pulse-modern.twig" with {post: post, compact: true} %}
 						{% endfor %}
 					</div>
 				</div>
@@ -172,7 +164,7 @@
 							Tecnología
 						</h3>
 						{% for post in posts_tecnologia|slice(0, 1) %}
-							{% include "partials/card-editorial.twig" with {post: post} %}
+							{% include "partials/card-pulse-modern.twig" with {post: post} %}
 						{% endfor %}
 					</div>
 					<!-- Deportes -->
@@ -182,7 +174,7 @@
 							Deportes
 						</h3>
 						{% for post in posts_deportes|slice(0, 1) %}
-							{% include "partials/card-editorial.twig" with {post: post} %}
+							{% include "partials/card-pulse-modern.twig" with {post: post} %}
 						{% endfor %}
 					</div>
 				</div>

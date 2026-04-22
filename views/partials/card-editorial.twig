@@ -1,17 +1,15 @@
 <article class="card-pulse group relative flex flex-col h-full bg-surface-container-lowest">
     <!-- Image Section -->
-    {% if post.thumbnail %}
     <div class="p-3">
-        <div class="aspect-[3/2] overflow-hidden rounded-DEFAULT bg-surface-container-low">
-            <img src="{{ post.thumbnail.src('diario-nacional-card')|default(site.theme.link ~ '/assets/img/no-image.jpg') }}" 
+        <div class="aspect-video overflow-hidden rounded-DEFAULT bg-surface-container-low">
+            <img src="{{ post.thumbnail.src('diario-nacional-card')|default(theme.link ~ '/assets/img/fallback-dn.png') }}" 
                  alt="{{ post.title }}" 
                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
         </div>
     </div>
-    {% endif %}
 
     <!-- Content Section -->
-    <div class="px-6 pb-8 pt-2 flex flex-col flex-grow">
+    <div class="px-4 pb-6 pt-2 flex flex-col flex-grow">
         <div class="flex items-center gap-2 mb-3">
             {% set category = post.terms('category')|first %}
             {% if category %}
@@ -23,7 +21,7 @@
             <span class="label-pulse text-on-surface/40">{{ post.date|date('M d, Y') }}</span>
         </div>
 
-        <h3 class="text-xl md:text-2xl font-headline font-extrabold leading-tight text-on-surface group-hover:text-primary transition-colors mb-4">
+        <h3 class="text-lg md:text-xl font-headline font-extrabold leading-tight text-on-surface group-hover:text-primary transition-colors mb-4">
             <a href="{{ post.link }}" class="hover:underline decoration-primary/30 underline-offset-4">
                 {{ post.title }}
             </a>
