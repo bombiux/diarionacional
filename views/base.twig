@@ -139,13 +139,32 @@ document.documentElement.classList.remove('dark');
 						{{ icon('search', 'w-8 h-8') }}
 					</span>
 					<input type="search" name="s" x-model="searchQuery" 
+						   x-init="$watch('searchOpen', value => value && $nextTick(() => $el.focus()))"
 						   placeholder="Explora las noticias de hoy..." 
-						   class="w-full pl-18 pr-18 py-8 bg-white rounded-DEFAULT border-none text-2xl font-headline font-extrabold text-on-surface placeholder:text-on-surface/20 focus:ring-4 focus:ring-primary/5 shadow-2xl transition-all" 
-						   autocomplete="off" required>
-					<button type="button" x-show="searchQuery.length > 0" @click="searchQuery = ''" class="absolute right-6 top-1/2 -translate-y-1/2 p-2 text-on-surface/20 hover:text-primary transition-colors">
-						{{ icon('x-circle-fill', 'w-6 h-6') }}
-					</button>
+						   class="w-full pl-18 pr-18 py-8 bg-white/90 backdrop-blur-md rounded-2xl border-none text-2xl font-headline font-extrabold text-on-surface placeholder:text-on-surface/20 focus:ring-8 focus:ring-primary/5 shadow-2xl transition-all" 
+						   autocomplete="off" 
+						   required
+						   hx-get="{{ site.url }}"
+						   hx-trigger="keyup changed delay:400ms, search"
+						   hx-target="#search-live-results"
+						   hx-indicator="#search-loading">
+					
+					<!-- Actions -->
+					<div class="absolute right-6 top-1/2 -translate-y-1/2 flex items-center gap-2">
+						{# Loading Indicator #}
+						<div id="search-loading" class="htmx-indicator">
+							<div class="animate-spin rounded-full h-6 w-6 border-2 border-primary border-t-transparent"></div>
+						</div>
+						<button type="button" x-show="searchQuery.length > 0" @click="searchQuery = ''; document.getElementById('search-live-results').innerHTML = ''" class="p-2 text-on-surface/20 hover:text-primary transition-colors">
+							{{ icon('x-circle-fill', 'w-6 h-6') }}
+						</button>
+					</div>
 				</form>
+
+				{# Live Results Area #}
+				<div id="search-live-results" class="mt-8 transition-all duration-300">
+					{# HTMX results will be injected here #}
+				</div>
 
 				<div class="mt-8 flex flex-wrap items-center gap-4 justify-center" x-show="searchQuery.length === 0">
 					<span class="label-pulse text-tertiary">Tendencias:</span>

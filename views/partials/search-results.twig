@@ -1,47 +1,53 @@
-{% if search_results|length > 0 %}
-    <div class="mt-8 flex flex-col gap-4">
-        {% for result in search_results %}
-        <a href="{{ result.url }}" class="flex items-center gap-4 group hover:bg-red-50 dark:hover:bg-zinc-800/50 p-3 rounded-2xl transition-colors">
-            {% if result.thumbnail %}
-            <div class="w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-surface-container">
-                <img src="{{ result.thumbnail }}" alt="{{ result.title }}" class="w-full h-full object-cover">
-            </div>
-            {% else %}
-            <div class="w-16 h-16 shrink-0 rounded-xl bg-surface-container flex items-center justify-center text-slate-300">
-                {{ icon('newspaper', 'w-6 h-6')|raw }}
-            </div>
-            {% endif %}
-            
-            <div class="flex flex-col flex-1 min-w-0">
-                {% if result.category is not empty %}
-                <span class="text-[8px] font-bold text-primary uppercase tracking-[0.2em] truncate">{{ result.category|first }}</span>
-                {% endif %}
-                <h4 class="text-sm font-bold text-on-surface dark:text-zinc-200 truncate group-hover:text-primary transition-colors">
-                    {% if result._formatted.title is defined %}
-                        {{ result._formatted.title|raw }}
-                    {% else %}
-                        {{ result.title }}
-                    {% endif %}
-                </h4>
-                <p class="text-xs text-slate-500 truncate mt-0.5">
-                    {% if result._formatted.excerpt is defined %}
-                        {{ result._formatted.excerpt|raw }}
-                    {% else %}
-                        {{ result.excerpt }}
-                    {% endif %}
-                </p>
-            </div>
-        </a>
-        {% endfor %}
+{# Partial: Live Search Results #}
+<div class="space-y-4 max-h-[60vh] overflow-y-auto px-2 custom-scrollbar">
+    {% if posts|length > 0 %}
+        <div class="grid grid-cols-1 gap-4">
+            {% for post in posts %}
+                <a href="{{ post.link }}" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all border border-transparent hover:border-white/20">
+                    {# Thumbnail #}
+                    <div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+                        {% if post.thumbnail %}
+                            <img src="{{ post.thumbnail.src('thumbnail') }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center text-on-surface/10">
+                                {{ icon('image', 'w-6 h-6')|raw }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Content #}
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="label-pulse text-[10px] text-primary">{{ post.terms('category')|first.name|default('Noticia') }}</span>
+                            <span class="text-[10px] text-on-surface/40">•</span>
+                            <span class="text-[10px] text-on-surface/40 font-sans">{{ post.date|date('d M') }}</span>
+                        </div>
+                        <h4 class="text-base font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-1 leading-tight">
+                            {{ post.title }}
+                        </h4>
+                    </div>
+
+                    {# Arrow #}
+                    <div class="text-on-surface/20 group-hover:text-primary group-hover:translate-x-1 transition-all">
+                        {{ icon('arrow-right', 'w-5 h-5')|raw }}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
         
-        <a href="{{ site.url }}/?s={{ search_query }}" class="mt-2 text-center text-xs font-bold text-primary hover:underline">
-            Ver todos los resultados para "{{ search_query }}"
-        </a>
-    </div>
-{% else %}
-    <div class="mt-8 text-center text-slate-500 px-4 py-8">
-        {{ icon('search', 'w-10 h-10 mb-2 text-slate-300')|raw }}
-        <p class="text-sm">No encontramos resultados para "<strong>{{ search_query }}</strong>".</p>
-        <p class="text-xs mt-1">Prueba con otros términos de búsqueda.</p>
-    </div>
-{% endif %}
+        {# Link to full results #}
+        <div class="pt-4 mt-4 border-t border-on-surface/5">
+            <a href="{{ site.url }}/?s={{ search_query|url_encode }}" class="flex items-center justify-center gap-2 text-sm font-bold text-primary hover:gap-3 transition-all py-2">
+                Ver todos los resultados
+                {{ icon('chevron-right', 'w-4 h-4')|raw }}
+            </a>
+        </div>
+    {% else %}
+        <div class="py-12 text-center">
+            <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mx-auto mb-4">
+                {{ icon('search', 'w-8 h-8 text-on-surface/10')|raw }}
+            </div>
+            <p class="text-on-surface/40 font-sans italic">No encontramos coincidencias para "{{ search_query }}"</p>
+        </div>
+    {% endif %}
+</div>

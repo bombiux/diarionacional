@@ -60,5 +60,17 @@
   .text-shadow-editorial {
     text-shadow: 0 2px 10px rgba(32, 50, 86, 0.1);
   }
+
+  .hero-editorial-gradient {
+    @apply bg-gradient-to-r from-white via-white/90 to-transparent dark:from-slate-900 dark:via-slate-900/90;
+  }
+}
+
+/* Hide native search clear button */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
 }
 
