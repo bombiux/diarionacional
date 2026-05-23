@@ -44,167 +44,7 @@
 		</div>
 	</section>
 
-	<!-- Floating Reading Controls - Positioned between hero and content -->
-	<nav class="flex justify-center -mt-5 relative z-20 mb-10" x-data="{
-			         textSizeLarge: false,
-			         isListening: false,
-			         speech: null,
-			         share(network) {
-			             const url = encodeURIComponent(window.location.href);
-			             const title = encodeURIComponent('{{ post.title|e('js') }}');
-			             if (network === 'whatsapp') {
-			                 window.open(`https://api.whatsapp.com/send?text=${title} - ${url}`, '_blank');
-			             } else if (network === 'facebook') {
-			                 window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
-			             } else if (network === 'x') {
-			                 window.open(`https://twitter.com/intent/tweet?text=${title}&url=${url}`, '_blank');
-			             }
-			         },
-			         toggleTextSize() {
-			             this.textSizeLarge = !this.textSizeLarge;
-			             const article = document.querySelector('article > div');
-			             if (this.textSizeLarge) {
-			                 article.classList.remove('text-lg');
-			                 article.classList.add('text-xl');
-			             } else {
-			                 article.classList.remove('text-xl');
-			                 article.classList.add('text-lg');
-			             }
-			         },
-			         toggleListen() {
-			             if (!('speechSynthesis' in window)) {
-			                 alert('Tu navegador no soporta la lectura en voz alta.');
-			                 return;
-			             }
-			
-			             if (this.isListening) {
-			                 window.speechSynthesis.cancel();
-			                 this.isListening = false;
-			                 return;
-			             }
-			
-			             const articleDiv = document.querySelector('article > div');
-			             const textToRead = articleDiv ? articleDiv.innerText : '';
-			
-			             if (!textToRead) {
-			                 alert('No se pudo encontrar el texto para leer.');
-			                 return;
-			             }
-			
-			             // Cancel any previous speech and wait a bit
-			             window.speechSynthesis.cancel();
-			
-			             setTimeout(() => {
-			                 this.speech = new SpeechSynthesisUtterance(textToRead);
-			
-			                 const voices = window.speechSynthesis.getVoices();
-			                 const spanishVoice = voices.find(v => v.lang.startsWith('es-')) || voices.find(v => v.lang === 'es-ES');
-			
-			                 if (spanishVoice) {
-			                     this.speech.voice = spanishVoice;
-			                     this.speech.lang = spanishVoice.lang;
-			                 } else {
-			                     this.speech.lang = 'es-ES';
-			                 }
-			
-			                 this.speech.rate = 1.0;
-			                 this.speech.pitch = 1.0;
-			
-			                 this.speech.onstart = () => { this.isListening = true; };
-			                 this.speech.onend = () => { this.isListening = false; };
-			                 this.speech.onerror = (e) => {
-			                     console.error('TTS Error:', e);
-			                     this.isListening = false;
-			                 };
-			
-			                 window.speechSynthesis.speak(this.speech);
-			             }, 100);
-			         }
-			     }">
 
-		<script>
-			// Limpieza global: detener audio al salir o recargar
-window.addEventListener('beforeunload', () => {
-if ('speechSynthesis' in window) {
-window.speechSynthesis.cancel();
-}
-});
-		</script>
-		<div
-			class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl rounded-full mx-auto w-max px-6 py-3 flex items-center gap-6 shadow-xl shadow-red-900/5 border border-white/30 dark:border-white/10 hidden md:flex">
-			<!-- Facebook -->
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('facebook')" title="Compartir en Facebook">
-				<div class="p-2 text-slate-500 group-hover:text-[#1877F2] transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="20" height="20"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
-				</div>
-				<span class="font-sans text-[8px] font-bold uppercase tracking-widest text-on-surface/40">Facebook</span>
-			</button>
-
-			<!-- X -->
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('x')" title="Compartir en X">
-				<div class="p-2 text-on-surface/40 dark:text-zinc-400 group-hover:text-black dark:group-hover:text-white transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="20" height="20"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-				</div>
-				<span class="font-sans text-[8px] font-bold uppercase tracking-widest text-on-surface/40">X</span>
-			</button>
-
-			<!-- WhatsApp -->
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('whatsapp')" title="Compartir en WhatsApp">
-				<div class="p-2 text-on-surface/40 dark:text-zinc-400 group-hover:text-[#25D366] transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24" width="20" height="20"><path d="M11.996 0A12.015 12.015 0 0 0 0 12.004c0 2.115.549 4.103 1.517 5.864L0 24l6.32-1.63A11.968 11.968 0 0 0 11.996 24 12.015 12.015 0 0 0 24 12.004 12.015 12.015 0 0 0 11.996 0zm0 20.125c-1.728 0-3.385-.436-4.85-1.266l-.348-.198-3.606.93.963-3.468-.217-.348A10.021 10.021 0 0 1 1.994 12.004a10.02 10.02 0 0 1 10.002-10 10.02 10.02 0 0 1 10.002 10 10.02 10.02 0 0 1-10.002 10.121zM17.48 14.54c-.301-.15-1.782-.876-2.057-.978-.276-.1-.476-.15-.677.15-.201.3-.777.978-.952 1.179-.176.2-.351.226-.652.076-.301-.15-1.272-.468-2.42-1.492-.894-.798-1.497-1.784-1.673-2.084-.176-.3-.018-.463.132-.613.136-.135.301-.35.451-.525.15-.175.201-.3.301-.5.1-.2.05-.375-.025-.525-.075-.15-.677-1.63-.927-2.23-.245-.586-.491-.506-.677-.515-.175-.01-.375-.01-.576-.01-.2 0-.526.075-.801.375s-1.053 1.026-1.053 2.502c0 1.477 1.078 2.903 1.228 3.104.15.2 2.115 3.228 5.123 4.526 2.053.886 2.766.953 3.693.805.92-.146 2.456-1.002 2.806-1.968.35-.965.35-1.791.246-1.967-.101-.176-.376-.276-.677-.426z"/></svg>
-				</div>
-				<span class="font-sans text-[8px] font-bold uppercase tracking-widest text-on-surface/40">WhatsApp</span>
-			</button>
-
-			<!-- Text Size -->
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="toggleTextSize()" title="Tamaño de texto">
-				<div class="p-2 transition-colors rounded-full" :class="textSizeLarge ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-on-surface/40 group-hover:text-primary'">
-					{{ icon('type', 'w-5 h-5')|raw }}
-				</div>
-				<span class="font-sans text-[8px] font-bold uppercase tracking-widest transition-colors" :class="textSizeLarge ? 'text-primary' : 'text-on-surface/40'">Texto</span>
-			</button>
-
-			<!-- Listen -->
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="toggleListen()" title="Escuchar Artículo">
-				<div class="p-2 transition-colors" :class="isListening ? 'text-primary bg-primary/10 rounded-full' : 'text-on-surface/40 group-hover:text-primary'">
-					<span class="w-5 h-5" x-html="isListening ? `{{ icon('stop-circle', 'w-5 h-5')|raw|e('js') }}` : `{{ icon('headphones', 'w-5 h-5')|raw|e('js') }}`"></span>
-				</div>
-				<span class="font-sans text-[8px] font-bold uppercase tracking-widest transition-colors" :class="isListening ? 'text-primary' : 'text-on-surface/40'">Escuchar</span>
-			</button>
-		</div>
-
-		<!-- Mobile optimized bar (scrollable if needed or wrapped) -->
-		<div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl rounded-full mx-auto w-[90%] px-4 py-3 flex md:hidden justify-between items-center shadow-xl shadow-red-900/5 border border-white/30 dark:border-white/10">
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('facebook')">
-				<div class="p-2 text-slate-500 group-hover:text-[#1877F2] transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
-				</div>
-				<span class="font-['Plus_Jakarta_Sans'] text-[7px] font-bold uppercase tracking-widest text-slate-400">FB</span>
-			</button>
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('x')">
-				<div class="p-2 text-slate-500 group-hover:text-black transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-				</div>
-				<span class="font-['Plus_Jakarta_Sans'] text-[7px] font-bold uppercase tracking-widest text-slate-400">X</span>
-			</button>
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="share('whatsapp')">
-				<div class="p-2 text-slate-500 group-hover:text-[#25D366] transition-colors">
-					<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M11.996 0A12.015 12.015 0 0 0 0 12.004c0 2.115.549 4.103 1.517 5.864L0 24l6.32-1.63A11.968 11.968 0 0 0 11.996 24 12.015 12.015 0 0 0 24 12.004 12.015 12.015 0 0 0 11.996 0zm0 20.125c-1.728 0-3.385-.436-4.85-1.266l-.348-.198-3.606.93.963-3.468-.217-.348A10.021 10.021 0 0 1 1.994 12.004a10.02 10.02 0 0 1 10.002-10 10.02 10.02 0 0 1 10.002 10 10.02 10.02 0 0 1-10.002 10.121zM17.48 14.54c-.301-.15-1.782-.876-2.057-.978-.276-.1-.476-.15-.677.15-.201.3-.777.978-.952 1.179-.176.2-.351.226-.652.076-.301-.15-1.272-.468-2.42-1.492-.894-.798-1.497-1.784-1.673-2.084-.176-.3-.018-.463.132-.613.136-.135.301-.35.451-.525.15-.175.201-.3.301-.5.1-.2.05-.375-.025-.525-.075-.15-.677-1.63-.927-2.23-.245-.586-.491-.506-.677-.515-.175-.01-.375-.01-.576-.01-.2 0-.526.075-.801.375s-1.053 1.026-1.053 2.502c0 1.477 1.078 2.903 1.228 3.104.15.2 2.115 3.228 5.123 4.526 2.053.886 2.766.953 3.693.805.92-.146 2.456-1.002 2.806-1.968.35-.965.35-1.791.246-1.967-.101-.176-.376-.276-.677-.426z"/></svg>
-				</div>
-				<span class="font-['Plus_Jakarta_Sans'] text-[7px] font-bold uppercase tracking-widest text-slate-400">WA</span>
-			</button>
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="toggleTextSize()">
-				<div class="bg-primary text-white rounded-full p-2.5 shadow-lg shadow-primary/30">{{ icon('type', 'w-5 h-5')|raw }}</div>
-				<span class="font-['Plus_Jakarta_Sans'] text-[7px] font-bold uppercase tracking-widest text-primary">Texto</span>
-			</button>
-			<button class="flex flex-col items-center gap-1 group transition-transform hover:scale-110 press-in-fluidity" @click="toggleListen()">
-				<div class="p-2 transition-colors" :class="isListening ? 'text-primary bg-primary/10 rounded-full' : 'text-slate-500 group-hover:text-primary'">
-					<span class="w-5 h-5" x-html="isListening ? `{{ icon('stop-circle', 'w-5 h-5')|raw|e('js') }}` : `{{ icon('headphones', 'w-5 h-5')|raw|e('js') }}`"></span>
-				</div>
-				<span class="font-['Plus_Jakarta_Sans'] text-[7px] font-bold uppercase tracking-widest transition-colors" :class="isListening ? 'text-primary' : 'text-slate-400'">Escuchar</span>
-			</button>
-		</div>
-	</nav>
 
 	<!-- Article Content -->
 	<article class="container mx-auto px-6 md:px-12 max-w-4xl mt-4 pb-24">
@@ -220,6 +60,48 @@ window.speechSynthesis.cancel();
 				                [&_figure]:my-8 [&_figure_img]:rounded-DEFAULT [&_figure_figcaption]:text-center [&_figure_figcaption]:text-sm [&_figure_figcaption]:mt-3 dark:[&_figure_figcaption]:text-zinc-500
 				                [&_img]:rounded-DEFAULT [&_img]:my-8 [&_a]:font-bold [&_a]:underline hover:[&_a]:text-primary dark:[&_a]:text-zinc-100">
 			{{ post.content }}
+		</div>
+
+		<!-- New Share Section (Bottom) -->
+		<div class="mt-16 pt-8 border-t border-slate-200 dark:border-zinc-800" x-data="{
+			share(network) {
+				const url = encodeURIComponent(window.location.href);
+				const title = encodeURIComponent('{{ post.title|e('js') }}');
+				if (network === 'whatsapp') {
+					window.open(`https://api.whatsapp.com/send?text=${title} - ${url}`, '_blank');
+				} else if (network === 'facebook') {
+					window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+				} else if (network === 'x') {
+					window.open(`https://twitter.com/intent/tweet?text=${title}&url=${url}`, '_blank');
+				}
+			}
+		}">
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+				<div class="flex flex-col gap-1">
+					<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">¿Te gustó la noticia?</span>
+					<h4 class="text-xl font-headline font-extrabold text-on-surface dark:text-zinc-100">Comparte este artículo</h4>
+				</div>
+				
+				<div class="flex items-center gap-3">
+					<!-- Facebook -->
+					<button @click="share('facebook')" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1877F2]/10 hover:bg-[#1877F2] text-[#1877F2] hover:text-white transition-all duration-300 group shadow-sm">
+						<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24h11.495v-9.294H9.691v-3.622h3.129V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+						<span class="text-xs font-bold uppercase tracking-wider">Facebook</span>
+					</button>
+
+					<!-- X -->
+					<button @click="share('x')" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-zinc-900/5 dark:bg-white/5 hover:bg-black dark:hover:bg-white text-on-surface dark:text-white dark:hover:text-black transition-all duration-300 group shadow-sm border border-black/5 dark:border-white/10">
+						<svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+						<span class="text-xs font-bold uppercase tracking-wider">X</span>
+					</button>
+
+					<!-- WhatsApp -->
+					<button @click="share('whatsapp')" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white transition-all duration-300 group shadow-sm">
+						<svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewbox="0 0 24 24"><path d="M11.996 0A12.015 12.015 0 0 0 0 12.004c0 2.115.549 4.103 1.517 5.864L0 24l6.32-1.63A11.968 11.968 0 0 0 11.996 24 12.015 12.015 0 0 0 24 12.004 12.015 12.015 0 0 0 11.996 0zm0 20.125c-1.728 0-3.385-.436-4.85-1.266l-.348-.198-3.606.93.963-3.468-.217-.348A10.021 10.021 0 0 1 1.994 12.004a10.02 10.02 0 0 1 10.002-10 10.02 10.02 0 0 1 10.002 10 10.02 10.02 0 0 1-10.002 10.121zM17.48 14.54c-.301-.15-1.782-.876-2.057-.978-.276-.1-.476-.15-.677.15-.201.3-.777.978-.952 1.179-.176.2-.351.226-.652.076-.301-.15-1.272-.468-2.42-1.492-.894-.798-1.497-1.784-1.673-2.084-.176-.3-.018-.463.132-.613.136-.135.301-.35.451-.525.15-.175.201-.3.301-.5.1-.2.05-.375-.025-.525-.075-.15-.677-1.63-.927-2.23-.245-.586-.491-.506-.677-.515-.175-.01-.375-.01-.576-.01-.2 0-.526.075-.801.375s-1.053 1.026-1.053 2.502c0 1.477 1.078 2.903 1.228 3.104.15.2 2.115 3.228 5.123 4.526 2.053.886 2.766.953 3.693.805.92-.146 2.456-1.002 2.806-1.968.35-.965.35-1.791.246-1.967-.101-.176-.376-.276-.677-.426z"/></svg>
+						<span class="text-xs font-bold uppercase tracking-wider">WhatsApp</span>
+					</button>
+				</div>
+			</div>
 		</div>
 	</article>
 

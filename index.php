@@ -4,6 +4,7 @@
  */
 
 use Timber\Timber;
+use App\Services\YouTubeService;
 
 $context = Timber::context();
 
@@ -32,6 +33,12 @@ $context['posts_farandula'] = Timber::get_posts([
     'posts_per_page' => 2
 ]);
 
+// 9.1 Tecnología (2 posts)
+$context['posts_tecnologia'] = Timber::get_posts([
+    'category_name' => 'tecnologia',
+    'posts_per_page' => 2
+]);
+
 // 9.5 Turismo (1 post for specialized hero)
 $context['posts_turismo'] = Timber::get_posts([
     'category_name' => 'turismo',
@@ -44,9 +51,13 @@ $context['latest_analisis'] = Timber::get_post([
     'posts_per_page' => 1
 ]);
 
+// 11. YouTube Videos (4 videos dinámicos)
+$context['youtube_videos'] = YouTubeService::getRecentVideos(4);
+
 // Load general posts if hero was not found (fallback)
 if (!$context['hero_post']) {
     $context['hero_post'] = Timber::get_post();
 }
 
 Timber::render('index.twig', $context);
+

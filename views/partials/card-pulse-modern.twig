@@ -28,11 +28,11 @@
     </div>
 
     <!-- Bottom Content Area -->
-    <div class="absolute bottom-8 left-8 right-8 z-20">
-        <div class="mb-2 text-white/50 text-sm font-bold tracking-widest">
+    <div class="absolute bottom-8 left-8 right-28 h-28 flex flex-col justify-start z-20">
+        <div class="mb-1 text-white/50 text-sm font-bold tracking-widest">
             0{{ loop.index|default('1') }}
         </div>
-        <h3 class="text-3xl md:text-4xl font-headline font-extrabold text-white leading-tight tracking-tight pr-16">
+        <h3 class="text-lg md:text-xl font-headline font-extrabold text-white leading-tight tracking-tight line-clamp-3">
             <a href="{{ post.link }}" class="hover:text-primary-fixed transition-colors">
                 {{ post.title }}
             </a>

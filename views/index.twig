@@ -53,7 +53,98 @@
 	</section>
 
 	{# ========================================== #}
-	{# TRENDS & ENTERTAINMENT: Farándula + Viral #}
+	{# DIARIO NACIONAL TV: YouTube Section       #}
+	{# ========================================== #}
+	<section class="section-alt -mx-6 px-6 py-12 rounded-[2.5rem] mb-12 relative overflow-hidden group" x-data='{ 
+		activeVideo: "{{ youtube_videos|first.id }}",
+		activeTitle: "{{ youtube_videos|first.title|escape('js') }}",
+		videos: {{ youtube_videos|json_encode()|raw }}
+	}'>
+		<!-- Decorative background elements -->
+		<div class="absolute -left-32 -top-32 w-96 h-96 bg-tertiary/5 rounded-full blur-[100px] pointer-events-none"></div>
+		<div class="absolute -right-32 -bottom-32 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none transition-transform duration-1000 group-hover:scale-110"></div>
+
+		<div class="max-w-6xl mx-auto relative z-10">
+			<!-- Header -->
+			<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-6 border-b border-outline-variant/10">
+				<div class="space-y-2">
+					<span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-widest">
+						<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+						Diario Nacional TV
+					</span>
+					<h3 class="text-3xl md:text-4xl font-headline font-extrabold text-on-surface dark:text-white flex items-center gap-3">
+						{{ icon('youtube', 'w-8 h-8 text-tertiary') }}
+						Últimos Videos
+					</h3>
+				</div>
+				<div>
+					<a href="https://www.youtube.com/@eldiarionacional2022?sub_confirmation=1" target="_blank" class="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-primary hover:bg-primary-dim text-white font-bold transition-all duration-300 transform hover:scale-105 shadow-md shadow-primary/10 text-sm">
+						{{ icon('play-btn-fill', 'w-5 h-5') }}
+						Suscribirse al canal
+					</a>
+				</div>
+			</div>
+
+			<!-- Main Layout Grid -->
+			<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+				<!-- Featured Video Player (8 cols) -->
+				<div class="lg:col-span-8 flex flex-col justify-between">
+					<div class="aspect-video w-full rounded-3xl overflow-hidden shadow-2xl bg-black relative group/player">
+						<iframe 
+							x-show="activeVideo"
+							class="w-full h-full relative z-10"
+							:src="activeVideo ? 'https://www.youtube.com/embed/' + activeVideo + '?autoplay=0&rel=0' : ''" 
+							title="YouTube video player" 
+							frameborder="0" 
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+							allowfullscreen>
+						</iframe>
+						<!-- Loading placeholder / Poster -->
+						<div class="absolute inset-0 flex items-center justify-center bg-slate-900">
+							<div class="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+						</div>
+					</div>
+					<div class="mt-6 space-y-2">
+						<span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest" x-text="videos.find(v => v.id === activeVideo)?.category || 'Especial'"></span>
+						<h4 class="text-xl md:text-3xl font-headline font-extrabold text-on-surface dark:text-white leading-tight" x-text="activeTitle"></h4>
+					</div>
+				</div>
+
+				<!-- Play List Column (4 cols) -->
+				<div class="lg:col-span-4 flex flex-col space-y-4">
+					<h5 class="text-[10px] font-bold uppercase tracking-[0.1em] text-on-surface/40 mb-2 px-1">Siguiente en la lista</h5>
+					<div class="space-y-3 flex-1 overflow-y-auto max-h-[450px] pr-2 custom-scrollbar">
+						<template x-for="(video, index) in videos" :key="video.id">
+							<button 
+								@click="activeVideo = video.id; activeTitle = video.title"
+								class="w-full text-left group/item flex gap-4 p-3 rounded-[1.25rem] transition-all duration-500"
+								:class="activeVideo === video.id ? 'bg-surface-container-lowest shadow-lg shadow-on-surface/5' : 'bg-transparent hover:bg-surface-container-highest/30'"
+							>
+								<!-- Thumbnail Preview -->
+								<div class="relative w-24 aspect-video rounded-xl overflow-hidden flex-shrink-0 bg-slate-900 shadow-sm">
+									<img :src="'https://img.youtube.com/vi/' + video.id + '/mqdefault.jpg'" class="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" alt="Thumbnail">
+									<div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+										<div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transform scale-75 group-hover/item:scale-100 transition-transform duration-300">
+											{{ icon('play-fill', 'w-4 h-4') }}
+										</div>
+									</div>
+								</div>
+
+								<!-- Info -->
+								<div class="flex flex-col justify-center py-0.5">
+									<span class="text-[9px] font-bold uppercase tracking-widest text-tertiary mb-1.5" x-text="video.category"></span>
+									<h6 class="text-xs font-bold text-on-surface dark:text-white line-clamp-2 leading-tight group-hover/item:text-primary transition-colors" x-text="video.title"></h6>
+								</div>
+							</button>
+						</template>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	{# ========================================== #}
+	{# TRENDS & ENTERTAINMENT: Farándula + Tecnología #}
 	{# ========================================== #}
 	<section class="pb-8">
 		<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -64,7 +155,6 @@
 						<div class="flex-1 space-y-6 text-center md:text-left">
 							<span class="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">Farándula</span>
 							<h3 class="text-4xl md:text-5xl font-headline font-extrabold leading-tight">El mundo del <br> espectáculo</h3>
-							<p class="text-on-surface/60 text-lg">Sigue las últimas noticias de tus artistas favoritos y eventos sociales.</p>
 						</div>
 						<div class="grid grid-cols-2 gap-4 flex-1">
 							{% set fallback_img = theme.link ~ '/assets/img/fallback-dn.png' %}
@@ -83,18 +173,18 @@
 				</div>
 			</div>
 
-			<!-- Viral / Trending (4 cols) -->
+			<!-- Tecnología (4 cols) -->
 			<div class="lg:col-span-4 py-6 h-full">
 				<h3 class="text-2xl font-headline font-extrabold mb-10 flex items-center gap-3">
 					<span class="w-2 h-8 bg-tertiary rounded-full"></span>
-					Contenido Viral
+					Tecnología
 				</h3>
 				<div class="space-y-10">
-					{% for post in posts_viral|slice(0, 3) %}
+					{% for post in posts_tecnologia|slice(0, 2) %}
 						<article class="group flex gap-6 items-start">
 							<span class="text-4xl font-headline font-extrabold text-surface-container-highest group-hover:text-tertiary/30 transition-colors leading-none">0{{ loop.index }}</span>
 							<div class="space-y-1">
-								<span class="text-[10px] font-bold uppercase tracking-widest text-tertiary/60">{{ post.terms('category')|first.name|default('Viral') }}</span>
+								<span class="text-[10px] font-bold uppercase tracking-widest text-tertiary/60">{{ post.terms('category')|first.name|default('Tecnología') }}</span>
 								<h4 class="text-md font-bold leading-tight group-hover:text-primary transition-colors">
 									<a href="{{ post.link }}">{{ post.title }}</a>
 								</h4>
