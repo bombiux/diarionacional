@@ -45,13 +45,13 @@
 <!-- Header (Mobile) -->
 <header class="md:hidden bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-[70] shadow-sm w-full">
     <div class="flex items-center justify-between px-6 py-4">
-        <button @click="mobileMenuOpen = true" class="text-on-surface-variant">
+        <button @click="mobileMenuOpen = true" class="text-on-surface-variant focus:outline-none focus:ring-0">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <a href="{{ site.url }}" class="flex items-center">
+        <a href="{{ site.url }}" class="flex items-center focus:outline-none focus:ring-0">
             <img src="{{ theme.link }}/assets/img/logo-dn.png" alt="Diario Nacional" class="h-10 w-auto object-contain">
         </a>
-        <button @click="searchOpen = !searchOpen" class="text-on-surface-variant">
+        <button @click="searchOpen = !searchOpen" class="text-on-surface-variant focus:outline-none focus:ring-0">
             <span class="material-symbols-outlined">search</span>
         </button>
     </div>

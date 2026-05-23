@@ -42,7 +42,7 @@
 	{# ========================================== #}
 	{# THE PULSE CAROUSEL: Tonal Sectioning      #}
 	{# ========================================== #}
-	<section class="section-alt px-6 py-12 rounded-xl mb-8 overflow-hidden" x-data="{
+	<section class="section-alt px-4 md:px-6 py-10 md:py-12 rounded-xl mb-8 overflow-hidden" x-data="{
 		activeSlide: 0,
 		slidesCount: 0,
 		init() {
@@ -58,7 +58,7 @@
 		},
 		scrollToActive() {
 			const slider = this.$refs.slider;
-			const cardWidth = slider.children[0].offsetWidth + 32; // width + gap
+			const cardWidth = slider.children[0].offsetWidth + (window.innerWidth < 768 ? 16 : 32); // width + gap
 			slider.scrollTo({
 				left: this.activeSlide * cardWidth,
 				behavior: 'smooth'
@@ -67,17 +67,20 @@
 	}">
 		<div class="max-w-6xl mx-auto relative">
 			<!-- Header & Controls -->
-			<div class="flex items-center justify-between mb-8 px-2">
+			<div class="flex items-center justify-between mb-8 px-1">
 				<div class="flex flex-col gap-1">
-					<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Selección Editorial</span>
-					<h3 class="text-3xl font-headline font-extrabold text-on-surface dark:text-zinc-100">Actualidad Nacional e Internacional</h3>
+					<span class="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Selección Premium</span>
+					<h3 class="text-2xl md:text-4xl font-headline font-black text-on-surface dark:text-zinc-100 flex items-center gap-2 md:gap-3">
+						{{ icon('journal-bookmark-fill', 'w-7 h-7 md:w-10 md:h-10 text-primary') }}
+						Editorial
+					</h3>
 				</div>
-				<div class="flex items-center gap-3">
-					<button @click="prev()" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
-						{{ icon('chevron-left', 'w-5 h-5') }}
+				<div class="flex items-center gap-2 md:gap-3">
+					<button @click="prev()" class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
+						{{ icon('chevron-left', 'w-4 h-4 md:w-5 md:h-5') }}
 					</button>
-					<button @click="next()" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
-						{{ icon('chevron-right', 'w-5 h-5') }}
+					<button @click="next()" class="w-9 h-9 md:w-10 md:h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
+						{{ icon('chevron-right', 'w-4 h-4 md:w-5 md:h-5') }}
 					</button>
 				</div>
 			</div>
@@ -85,11 +88,11 @@
 			<!-- Slider Track -->
 			<div 
 				x-ref="slider"
-				class="flex gap-8 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4"
+				class="flex gap-4 md:gap-8 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4"
 				style="scroll-behavior: smooth;"
 				@scroll.debounce.100ms="
 					const slider = $refs.slider;
-					const cardWidth = slider.children[0].offsetWidth + 32;
+					const cardWidth = slider.children[0].offsetWidth + (window.innerWidth < 768 ? 16 : 32);
 					activeSlide = Math.round(slider.scrollLeft / cardWidth);
 				"
 			>
@@ -114,6 +117,48 @@
 			</div>
 		</div>
 	</section>
+
+	{# ========================================== #}
+	{# SPORTS SECTION: High-Impact Mosaic Grid   #}
+	{# ========================================== #}
+	{% if posts_deportes|length > 0 %}
+	<section class="mb-12 px-2 md:px-0">
+		<div class="flex items-center justify-between mb-8 md:mb-10 px-1">
+			<div class="flex flex-col gap-1">
+				<span class="text-[9px] md:text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Pasión en la cancha</span>
+				<h3 class="text-2xl md:text-4xl font-headline font-black text-on-surface dark:text-zinc-100 flex items-center gap-2 md:gap-3">
+					{{ icon('trophy-fill', 'w-7 h-7 md:w-10 md:h-10 text-primary') }}
+					Deportes
+				</h3>
+			</div>
+			<a href="{{ site.url }}/category/deportes" class="group flex items-center gap-2 text-[9px] md:text-[10px] font-black text-primary hover:text-[#051139] transition-all uppercase tracking-[0.2em]">
+				Archivo
+				{{ icon('arrow-right', 'w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 transition-transform') }}
+			</a>
+		</div>
+		
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 h-auto lg:h-[600px]">
+			<!-- Featured Big Story -->
+			<div class="lg:col-span-2 h-full">
+				{% include "partials/card-sports-main.twig" with {post: posts_deportes[0]} %}
+			</div>
+
+			<!-- Secondary Column -->
+			<div class="flex flex-col gap-8 h-full">
+				{% if posts_deportes[1] %}
+					<div class="flex-1">
+						{% include "partials/card-sports-item.twig" with {post: posts_deportes[1]} %}
+					</div>
+				{% endif %}
+				{% if posts_deportes[2] %}
+					<div class="flex-1">
+						{% include "partials/card-sports-item.twig" with {post: posts_deportes[2]} %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</section>
+	{% endif %}
 
 	{# ========================================== #}
 	{# DIARIO NACIONAL TV: YouTube Section       #}

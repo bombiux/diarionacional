@@ -37,6 +37,13 @@ $context['posts_salud'] = Timber::get_posts([
     'post__not_in' => $excluded_ids
 ]);
 
+// 5. Deportes (3 posts)
+$context['posts_deportes'] = Timber::get_posts([
+    'category_name' => 'deportes',
+    'posts_per_page' => 3,
+    'post__not_in' => $excluded_ids
+]);
+
 // 3.5 Viral (3 posts for trending widget)
 $context['posts_viral'] = Timber::get_posts([
     'category_name' => 'viral',
