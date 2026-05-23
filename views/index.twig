@@ -40,14 +40,77 @@
 	</section>
 
 	{# ========================================== #}
-	{# THE PULSE GRID: Tonal Sectioning          #}
+	{# THE PULSE CAROUSEL: Tonal Sectioning      #}
 	{# ========================================== #}
-		<section class="section-alt -mx-6 px-6 py-12 rounded-3xl mb-8"> <div class="max-w-6xl mx-auto">
+	<section class="section-alt px-6 py-12 rounded-xl mb-8 overflow-hidden" x-data="{
+		activeSlide: 0,
+		slidesCount: 0,
+		init() {
+			this.slidesCount = this.$refs.slider.children.length;
+		},
+		next() {
+			this.activeSlide = (this.activeSlide + 1) % this.slidesCount;
+			this.scrollToActive();
+		},
+		prev() {
+			this.activeSlide = (this.activeSlide - 1 + this.slidesCount) % this.slidesCount;
+			this.scrollToActive();
+		},
+		scrollToActive() {
+			const slider = this.$refs.slider;
+			const cardWidth = slider.children[0].offsetWidth + 32; // width + gap
+			slider.scrollTo({
+				left: this.activeSlide * cardWidth,
+				behavior: 'smooth'
+			});
+		}
+	}">
+		<div class="max-w-6xl mx-auto relative">
+			<!-- Header & Controls -->
+			<div class="flex items-center justify-between mb-8 px-2">
+				<div class="flex flex-col gap-1">
+					<span class="text-[10px] font-bold text-primary uppercase tracking-[0.2em]">Selección Editorial</span>
+					<h3 class="text-3xl font-headline font-extrabold text-on-surface dark:text-zinc-100">Actualidad Nacional e Internacional</h3>
+				</div>
+				<div class="flex items-center gap-3">
+					<button @click="prev()" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
+						{{ icon('chevron-left', 'w-5 h-5') }}
+					</button>
+					<button @click="next()" class="w-10 h-10 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all">
+						{{ icon('chevron-right', 'w-5 h-5') }}
+					</button>
+				</div>
+			</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{% for post in posts_nacionales|slice(0, 3) %}
-					{% include "partials/card-pulse-modern.twig" with {post: post} %}
+			<!-- Slider Track -->
+			<div 
+				x-ref="slider"
+				class="flex gap-8 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4"
+				style="scroll-behavior: smooth;"
+				@scroll.debounce.100ms="
+					const slider = $refs.slider;
+					const cardWidth = slider.children[0].offsetWidth + 32;
+					activeSlide = Math.round(slider.scrollLeft / cardWidth);
+				"
+			>
+				{% set all_pulse_posts = posts_nacionales|merge(posts_internacionales)|merge(posts_salud) %}
+				{% for post in all_pulse_posts %}
+					<div class="min-w-[85%] md:min-w-[45%] lg:min-w-[31%] snap-start">
+						{% include "partials/card-pulse-modern.twig" with {post: post, loop: loop} %}
+					</div>
 				{% endfor %}
+			</div>
+
+			<!-- Pagination Dots -->
+			<div class="flex justify-center items-center gap-2 mt-8">
+				<template x-for="(i, index) in Array.from({ length: slidesCount })" :key="index">
+					<button 
+						@click="activeSlide = index; scrollToActive()"
+						class="h-1.5 transition-all duration-300 rounded-full"
+						:class="activeSlide === index ? 'w-8 bg-primary' : 'w-2 bg-primary/20 hover:bg-primary/40'"
+						:aria-label="'Ir a nota ' + (index + 1)"
+					></button>
+				</template>
 			</div>
 		</div>
 	</section>
@@ -55,7 +118,7 @@
 	{# ========================================== #}
 	{# DIARIO NACIONAL TV: YouTube Section       #}
 	{# ========================================== #}
-	<section class="section-alt -mx-6 px-6 py-12 rounded-[2.5rem] mb-12 relative overflow-hidden group" x-data='{ 
+	<section class="section-alt px-6 py-12 rounded-xl mb-12 relative overflow-hidden group" x-data='{ 
 		activeVideo: "{{ youtube_videos|first.id }}",
 		activeTitle: "{{ youtube_videos|first.title|escape('js') }}",
 		videos: {{ youtube_videos|json_encode()|raw }}
@@ -150,7 +213,7 @@
 		<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 			<!-- Farándula (8 cols) -->
 			<div class="lg:col-span-8">
-				<div class="bg-surface-container-low p-8 md:p-12 rounded-[3rem] relative overflow-hidden group h-full flex items-center">
+				<div class="bg-surface-container-low p-8 md:p-12 rounded-xl relative overflow-hidden group h-full flex items-center">
 					<div class="relative z-10 flex flex-col md:flex-row items-center gap-12 w-full">
 						<div class="flex-1 space-y-6 text-center md:text-left">
 							<span class="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest">Farándula</span>

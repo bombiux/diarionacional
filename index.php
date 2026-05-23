@@ -14,11 +14,27 @@ $context['hero_post'] = Timber::get_post([
     'posts_per_page' => 1
 ]);
 
-// 2. Nacionales (6 posts)
+$excluded_ids = $context['hero_post'] ? [$context['hero_post']->id] : [];
+
+// 2. Nacionales (2 posts)
 $context['posts_nacionales'] = Timber::get_posts([
     'category_name' => 'nacionales',
-    'posts_per_page' => 6,
-    'post__not_in' => $context['hero_post'] ? [$context['hero_post']->id] : []
+    'posts_per_page' => 2,
+    'post__not_in' => $excluded_ids
+]);
+
+// 3. Internacionales (2 posts)
+$context['posts_internacionales'] = Timber::get_posts([
+    'category_name' => 'internacionales',
+    'posts_per_page' => 2,
+    'post__not_in' => $excluded_ids
+]);
+
+// 4. Salud (2 posts)
+$context['posts_salud'] = Timber::get_posts([
+    'category_name' => 'salud',
+    'posts_per_page' => 2,
+    'post__not_in' => $excluded_ids
 ]);
 
 // 3.5 Viral (3 posts for trending widget)
@@ -60,4 +76,3 @@ if (!$context['hero_post']) {
 }
 
 Timber::render('index.twig', $context);
-
