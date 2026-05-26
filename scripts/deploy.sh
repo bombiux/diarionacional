@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 #
-# deploy.sh — Script de despliegue para DBarricada
+# deploy.sh — Script de despliegue para Diario Nacional
 #
 # Uso:
-#   ./scripts/deploy.sh          → Build + deploy completo
-#   ./scripts/deploy.sh --dry    → Simula el rsync sin copiar nada
+#   ./scripts/deploy.sh              → Build + deploy completo
+#   ./scripts/deploy.sh --dry        → Simula el rsync sin copiar nada
 #   ./scripts/deploy.sh --skip-build → Solo sincroniza (sin rebuild)
 #
 
 set -euo pipefail
 
 # ─── Configuración ──────────────────────────────────────────────
-SSH_HOST="172.16.12.102"
+SSH_HOST="172.16.12.106"
 SSH_USER="root"
-REMOTE_PATH="/usr/local/lsws/Example/html/wordpress/wp-content/themes/DBarricada"
+REMOTE_PATH="/usr/local/lsws/Example/html/wordpress/wp-content/themes/diarionacional"
 THEME_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
 # Colores
@@ -84,8 +84,6 @@ else
     success "Assets compilados en dist/"
 fi
 
-
-
 # ─── 3. Verificar que dist/ existe ──────────────────────────────
 if [ ! -d "dist" ]; then
     error "El directorio dist/ no existe. Ejecuta 'npm run build' primero."
@@ -120,9 +118,7 @@ sshpass -p "$SSH_PASS" rsync $RSYNC_FLAGS \
     --exclude='.env' \
     --exclude='.env.example' \
     --exclude='.editorconfig' \
-    --exclude='.dockerrc' \
     --exclude='.vscode' \
-    --exclude='.engram' \
     --exclude='src/' \
     --exclude='vendor/' \
     --exclude='vite.config.js' \
@@ -130,10 +126,15 @@ sshpass -p "$SSH_PASS" rsync $RSYNC_FLAGS \
     --exclude='postcss.config.js' \
     --exclude='package.json' \
     --exclude='package-lock.json' \
+    --exclude='composer.lock' \
     --exclude='AGENTS.md' \
     --exclude='walkthrough.md' \
     --exclude='*.md' \
+    --exclude='*.xlsx' \
+    --exclude='data/' \
     --exclude='scripts/' \
+    --exclude='migrate-web.php' \
+    --exclude='image.png' \
     ./ "${SSH_USER}@${SSH_HOST}:${REMOTE_PATH}/"
 
 success "Archivos sincronizados"
@@ -152,32 +153,32 @@ success "Archivo .env de producción creado"
 header "6/8 · Instalando dependencias PHP (producción)"
 
 if [ "$DRY_RUN" = true ]; then
-    warn "Simulación: rm -rf vendor && composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
+    warn "Simulación: composer install --no-dev --optimize-autoloader --ignore-platform-reqs"
 else
-    remote "export PATH=\$PATH:/usr/local/bin:/usr/bin:/bin; source /etc/profile 2>/dev/null; cd ${REMOTE_PATH} && rm -rf vendor && composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction 2>&1"
+    remote "export PATH=\$PATH:/usr/local/bin:/usr/bin:/bin; source /etc/profile 2>/dev/null; cd ${REMOTE_PATH} && composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction 2>&1"
 fi
-success "Dependencias PHP instaladas (sin dev)"
+success "Dependencias PHP instaladas (sin dev) en el servidor"
 
 # ─── 8. Ajustar permisos ────────────────────────────────────────
-header "7/8 · Ajustando permisos de la carpeta del tema"
+header "7/8 · Ajustando permisos"
 
 if [ "$DRY_RUN" = true ]; then
     warn "Simulación: chown -R nobody:nogroup ${REMOTE_PATH}"
 else
-    remote "chown -R nobody:nogroup ${REMOTE_PATH}"
+    remote "chown -R nobody:nogroup ${REMOTE_PATH} 2>/dev/null || remote chown -R www-data:www-data ${REMOTE_PATH} 2>/dev/null || true"
 fi
-success "Permisos ajustados a nobody:nogroup"
+success "Permisos ajustados"
 
-# ─── 9. Resumen final ───────────────────────────────────────────
+# ─── 9. Resumen final ───────────────────────────────────────────────
 header "8/8 · Despliegue completado"
 
 if [ "$DRY_RUN" = true ]; then
     warn "Este fue un ensayo. Ejecuta sin --dry para desplegar de verdad."
 else
-    echo -e "${GREEN}${BOLD}"
-    echo "  ╔═══════════════════════════════════════╗"
-    echo "  ║   🚀  DBarricada desplegado con éxito  ║"
-    echo "  ╚═══════════════════════════════════════╝"
+    echo -e "\n${GREEN}${BOLD}"
+    echo "  ╔══════════════════════════════════════════════╗"
+    echo "  ║   🚀  Diario Nacional desplegado con éxito   ║"
+    echo "  ╚══════════════════════════════════════════════╝"
     echo -e "${NC}"
     info "Servidor:  ${SSH_USER}@${SSH_HOST}"
     info "Ruta:      ${REMOTE_PATH}"

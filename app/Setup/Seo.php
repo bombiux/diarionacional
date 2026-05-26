@@ -106,12 +106,12 @@ class Seo
                 'url' => home_url(),
                 'logo' => get_template_directory_uri() . '/assets/img/logo-dn.png',
                 'sameAs' => [
-                    'https://www.facebook.com/diarionacional',
-                    'https://x.com/diarionacional',
-                    'https://instagram.com/diarionacional',
-                    'https://www.youtube.com/@diarionacional',
-                    'https://www.tiktok.com/@diarionacional'
-                ]
+                    'https://www.facebook.com/profile.php?id=61581224672655',
+                    'https://x.com/DiarioNacional9',
+                    'https://www.instagram.com/el.diarionacional/',
+                    'https://www.youtube.com/@eldiarionacional2022',
+                    'https://www.tiktok.com/@eldiarionacional'
+                ],
             ];
         } elseif (is_single()) {
             // NewsArticle schema (SEO-03: complete)
